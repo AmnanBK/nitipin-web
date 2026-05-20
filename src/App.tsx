@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Catalogue from './pages/Catalogue';
 
 // Komponen Proteksi Rute (ProtectedRoute)
 // Menjamin hanya user terautentikasi (traveler) yang bisa mengakses halaman internal
@@ -39,6 +40,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/catalogue"
+          element={
+            <ProtectedRoute>
+              <Catalogue />
             </ProtectedRoute>
           }
         />
