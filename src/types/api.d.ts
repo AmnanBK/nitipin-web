@@ -180,3 +180,25 @@ export interface ProductFilters {
   minPrice?: number;
   maxPrice?: number;
 }
+
+// ==========================================
+// ORDER SERVICE TYPES
+// ==========================================
+
+export type OrderStatus = 'pending_review' | 'approved' | 'rejected' | 'cancelled' | 'purchased' | 'shipped' | 'completed';
+
+export interface Order {
+  id: number;
+  buyer_id: number;
+  traveler_id: number;
+  product_id: number;
+  quantity: number;
+  total_price: number | string;
+  shipping_address_id: number;
+  status: OrderStatus;
+  created_at: string;
+  updated_at: string;
+  product_name?: string;
+  buyer_name?: string;
+  photo_url?: string | null;
+}
