@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import type { TravelerProfile, Product, Order } from '../types/api';
 
@@ -116,30 +117,30 @@ export default function Dashboard() {
           
           {/* Menu Links (6 Clean Navigation links) */}
           <nav className="space-y-1 mt-4">
-            <a href="#" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
+            <Link to="/dashboard" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
               <Icons.Dashboard />
               <span>Dashboard</span>
-            </a>
-            <a href="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            </Link>
+            <Link to="/catalogue" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.Package />
               <span>My Catalogue</span>
-            </a>
-            <a href="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            </Link>
+            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.ShoppingCart />
               <span>Orders</span>
-            </a>
-            <a href="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            </Link>
+            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.History />
               <span>Sales History</span>
-            </a>
-            <a href="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            </Link>
+            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.Star />
               <span>My Reviews</span>
-            </a>
-            <a href="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            </Link>
+            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.Chat />
               <span>Chats</span>
-            </a>
+            </Link>
           </nav>
         </div>
 
