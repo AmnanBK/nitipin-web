@@ -259,9 +259,13 @@ export default function SalesHistory() {
         </div>
 
         {/* User Card */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 shrink-0">
-          <div className="w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white shrink-0">
-            <Icons.User />
+        <Link to="/profile" className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 hover:bg-white/20 transition-all shrink-0 cursor-pointer block">
+          <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-blue-600/30">
+            {profile?.profile_photo ? (
+              <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <Icons.User />
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <h4 className="font-semibold text-sm leading-none text-white truncate">
@@ -271,7 +275,7 @@ export default function SalesHistory() {
               {profile?.email || user?.email || 'sarah@email.com'}
             </p>
           </div>
-        </div>
+        </Link>
       </aside>
 
       {/* ==========================================
