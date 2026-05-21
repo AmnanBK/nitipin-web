@@ -622,7 +622,7 @@ export default function Orders() {
               <Icons.ShoppingCart />
               <span>Orders</span>
             </Link>
-            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            <Link to="/sales-history" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.History />
               <span>Sales History</span>
             </Link>

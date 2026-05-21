@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Catalogue from './pages/Catalogue';
 import Orders from './pages/Orders';
+import SalesHistory from './pages/SalesHistory';
 
 // Komponen Proteksi Rute (ProtectedRoute)
 // Menjamin hanya user terautentikasi (traveler) yang bisa mengakses halaman internal
@@ -57,6 +58,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales-history"
+          element={
+            <ProtectedRoute>
+              <SalesHistory />
             </ProtectedRoute>
           }
         />
