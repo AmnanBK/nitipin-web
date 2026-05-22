@@ -630,7 +630,7 @@ export default function Orders() {
               <Icons.Star />
               <span>My Reviews</span>
             </Link>
-            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            <Link to="/chats" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.Chat />
               <span>Chats</span>
             </Link>
