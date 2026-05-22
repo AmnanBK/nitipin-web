@@ -254,7 +254,7 @@ export default function Catalogue() {
               <Icons.History />
               <span>Sales History</span>
             </Link>
-            <Link to="#" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
+            <Link to="/reviews" className="text-white hover:bg-white/10 px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-medium">
               <Icons.Star />
               <span>My Reviews</span>
             </Link>

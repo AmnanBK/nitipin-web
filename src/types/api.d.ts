@@ -91,6 +91,7 @@ export interface TravelerBalance {
 
 export interface TravelerReview {
   _id: string;
+  order_id: number;
   traveler_id: number;
   buyer_id: number;
   buyer_name: string;
