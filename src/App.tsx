@@ -9,6 +9,7 @@ import Orders from './pages/Orders';
 import SalesHistory from './pages/SalesHistory';
 import Profile from './pages/Profile';
 import Reviews from './pages/Reviews';
+import Chats from './pages/Chats';
 
 // Komponen Proteksi Rute (ProtectedRoute)
 // Menjamin hanya user terautentikasi (traveler) yang bisa mengakses halaman internal
@@ -84,6 +85,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Reviews />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chats"
+          element={
+            <ProtectedRoute>
+              <Chats />
             </ProtectedRoute>
           }
         />
