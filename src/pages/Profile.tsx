@@ -357,7 +357,7 @@ export default function Profile() {
           
           {/* Header Title Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">Profile</h2>
+            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Profile</h2>
             <p className="text-sm text-gray-400 mt-1 font-semibold">Manage your profile</p>
             <hr className="border-gray-200 mt-6" />
           </div>
@@ -416,7 +416,7 @@ export default function Profile() {
  
                   {/* Name and green toggle status */}
                   <div className="space-y-2.5">
-                    <h3 className="text-2xl font-black text-gray-900 leading-none">
+                    <h3 className="text-lg font-semibold text-gray-900 leading-none">
                       {profile?.name || user?.name || 'Sarah'}
                     </h3>
                     
@@ -461,7 +461,7 @@ export default function Profile() {
               {/* CARD 2: PERSONAL INFORMATION FORM PANEL */}
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
                 
-                <h3 className="text-lg font-black text-gray-900 mb-6 tracking-wide">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6 tracking-wide">
                   Personal Information
                 </h3>
 
@@ -472,47 +472,47 @@ export default function Profile() {
                     
                     {/* Name field */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Name</label>
+                      <label className="block text-sm font-normal text-gray-600">Name</label>
                       <input
                         type="text"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g., Sarah"
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
                       />
                     </div>
 
                     {/* Email field (Disabled read-only) */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">E-mail</label>
+                      <label className="block text-sm font-normal text-gray-600">E-mail</label>
                       <input
                         type="email"
                         disabled
                         value={profile?.email || user?.email || 'sarah@email.com'}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-400 cursor-not-allowed"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-400 cursor-not-allowed"
                       />
                     </div>
 
                     {/* Phone field */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Phone</label>
+                      <label className="block text-sm font-normal text-gray-600">Phone</label>
                       <input
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="e.g., +6281234567890"
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
                       />
                     </div>
 
                     {/* Country dropdown picker */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Country</label>
+                      <label className="block text-sm font-normal text-gray-600">Country</label>
                       <select
                         value={countryId}
                         onChange={(e) => setCountryId(e.target.value)}
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all cursor-pointer"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-gray-800 cursor-pointer"
                       >
                         <option value="" disabled className="text-gray-400">Select target country</option>
                         {countries.map((c) => (
@@ -525,13 +525,13 @@ export default function Profile() {
 
                     {/* Bio field */}
                     <div className="space-y-2 md:col-span-2">
-                      <label className="block text-sm font-bold text-gray-700">Biography (Bio)</label>
+                      <label className="block text-sm font-normal text-gray-600">Biography (Bio)</label>
                       <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="Describe your travel frequency, targeted countries, and shopping services..."
                         rows={3}
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400 resize-none"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 resize-none"
                       />
                     </div>
 
@@ -596,7 +596,7 @@ export default function Profile() {
           <div className="relative bg-white rounded-3xl w-full max-w-md p-6 md:p-8 shadow-2xl border border-gray-150 transform transition-all duration-300 scale-100 flex flex-col gap-6 animate-scale-in">
             {/* Header */}
             <div>
-              <h3 className="text-xl font-black text-gray-900 leading-none">Update Profile Photo Link</h3>
+              <h3 className="text-lg font-semibold text-gray-900 leading-none">Update Profile Photo Link</h3>
               <p className="text-xs text-gray-400 mt-2 font-semibold leading-relaxed">
                 Provide a direct URL to your new profile image. It will update instantly across your dashboard.
               </p>
@@ -630,14 +630,14 @@ export default function Profile() {
             {/* Input Form */}
             <form onSubmit={handleApplyPhotoUrl} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Profile Photo URL</label>
+                <label className="block text-xs font-normal text-gray-600 uppercase tracking-wider">Profile Photo URL</label>
                 <input
                   type="url"
                   required
                   value={tempPhotoUrl}
                   onChange={(e) => setTempPhotoUrl(e.target.value)}
                   placeholder="e.g., https://example.com/photo.jpg"
-                  className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
                 />
                 <span className="text-[10px] text-gray-400 block font-semibold leading-relaxed">
                   Tip: Paste direct link ending in JPG, PNG, WEBP, or any hosted cloud storage URL.

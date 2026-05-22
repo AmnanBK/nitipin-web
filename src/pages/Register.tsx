@@ -59,7 +59,7 @@ export default function Register() {
         {/* Sisi Kiri: Form Register */}
         <div className="flex flex-col justify-center px-4 md:px-12 lg:px-16 py-3 overflow-y-auto h-full">
           <div className="max-w-md w-full mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-1">Register</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight mb-1">Register</h1>
             <p className="text-xs text-gray-500 mb-3 leading-normal">
               If you already have an account register <br />
               You can{' '}
@@ -80,14 +80,13 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               {/* Input Email */}
-              <div className="space-y-0.5">
-                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Email</label>
-                <div className="flex items-center border-b border-gray-300 py-1 focus-within:border-blue-600 transition-colors">
-                  {/* Icon Envelope */}
+              <div className="space-y-1">
+                <label className="block text-xs font-normal text-gray-600">Email</label>
+                <div className="relative flex items-center">
                   <svg
-                    className="h-4.5 w-4.5 text-gray-400 mr-2.5"
+                    className="absolute left-3 h-4.5 w-4.5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -105,7 +104,7 @@ export default function Register() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-0.5 focus:outline-none text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     required
                     disabled={isSubmitting || !!success}
                   />
@@ -113,12 +112,11 @@ export default function Register() {
               </div>
 
               {/* Input Name */}
-              <div className="space-y-0.5">
-                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Name</label>
-                <div className="flex items-center border-b border-gray-300 py-1 focus-within:border-blue-600 transition-colors">
-                  {/* Icon User */}
+              <div className="space-y-1">
+                <label className="block text-xs font-normal text-gray-600">Name</label>
+                <div className="relative flex items-center">
                   <svg
-                    className="h-4.5 w-4.5 text-gray-400 mr-2.5"
+                    className="absolute left-3 h-4.5 w-4.5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -136,7 +134,7 @@ export default function Register() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-0.5 focus:outline-none text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     required
                     disabled={isSubmitting || !!success}
                   />
@@ -144,12 +142,11 @@ export default function Register() {
               </div>
 
               {/* Input Phone Number */}
-              <div className="space-y-0.5">
-                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Phone Number</label>
-                <div className="flex items-center border-b border-gray-300 py-1 focus-within:border-blue-600 transition-colors">
-                  {/* Icon Phone */}
+              <div className="space-y-1">
+                <label className="block text-xs font-normal text-gray-600">Phone Number</label>
+                <div className="relative flex items-center">
                   <svg
-                    className="h-4.5 w-4.5 text-gray-400 mr-2.5"
+                    className="absolute left-3 h-4.5 w-4.5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -167,19 +164,19 @@ export default function Register() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Enter your phone number"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-0.5 focus:outline-none text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     disabled={isSubmitting || !!success}
                   />
                 </div>
               </div>
 
               {/* Input Password */}
-              <div className="space-y-0.5">
-                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Password</label>
-                <div className="flex items-center border-b border-gray-300 py-1 focus-within:border-blue-600 transition-colors">
+              <div className="space-y-1">
+                <label className="block text-xs font-normal text-gray-600">Password</label>
+                <div className="relative flex items-center">
                   {/* Icon Padlock */}
                   <svg
-                    className="h-4.5 w-4.5 text-gray-400 mr-2.5"
+                    className="absolute left-3 h-4.5 w-4.5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -197,7 +194,7 @@ export default function Register() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your Password"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-0.5 focus:outline-none text-sm"
+                    className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     required
                     disabled={isSubmitting || !!success}
                   />
@@ -205,7 +202,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600 focus:outline-none ml-2 flex items-center justify-center"
+                    className="absolute right-3 text-gray-400 hover:text-gray-600 focus:outline-none flex items-center justify-center"
                     disabled={isSubmitting || !!success}
                   >
                     {showPassword ? (
@@ -299,7 +296,7 @@ export default function Register() {
 
           {/* Label Bawah */}
           <div className="relative z-10 mt-4">
-            <h2 className="text-white text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight">
+            <h2 className="text-white text-3xl lg:text-4xl xl:text-5xl font-semibold tracking-tight">
               Register to Nitipin
             </h2>
           </div>

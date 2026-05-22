@@ -299,7 +299,7 @@ export default function Catalogue() {
           {/* HEADER MAIN WITH ADD PRODUCT BUTTON */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">My Catalogue</h2>
+              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">My Catalogue</h2>
               <p className="text-sm text-gray-400 mt-1 font-medium">Manage your product</p>
             </div>
             
@@ -352,7 +352,7 @@ export default function Catalogue() {
               <div className="w-20 h-20 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6">
                 <Icons.Package />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Katalog Anda Masih Kosong</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Katalog Anda Masih Kosong</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
                 Mulai pasang barang belanjaan luar negeri Anda agar pembeli dapat melakukan jastip dengan mudah!
               </p>
@@ -398,12 +398,12 @@ export default function Catalogue() {
                     {/* Details content */}
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div className="mb-4">
-                        <h4 className="text-gray-900 font-extrabold text-base leading-tight line-clamp-2" title={product.product_name}>
+                        <h4 className="text-gray-900 font-semibold text-lg leading-tight line-clamp-2" title={product.product_name}>
                           {product.product_name}
                         </h4>
                         
                         {product.description && (
-                          <p className="text-gray-400 text-xs mt-1.5 line-clamp-2">
+                          <p className="text-gray-600 text-sm font-normal mt-1.5 line-clamp-2">
                             {product.description}
                           </p>
                         )}
@@ -411,7 +411,7 @@ export default function Catalogue() {
 
                       <div>
                         {/* Price wrapper with Tag Icon */}
-                        <div className="flex items-center text-sm font-extrabold text-[#1e53e6] mb-4 bg-blue-50/50 p-2 rounded-lg inline-flex w-full">
+                        <div className="flex items-center text-sm font-semibold text-[#1e53e6] mb-4 bg-blue-50/50 p-2 rounded-lg inline-flex w-full">
                           <Icons.Tag />
                           <span>{formatMockupIDR(displayPrice)}</span>
                         </div>
@@ -440,7 +440,8 @@ export default function Catalogue() {
                 );
               })}
             </div>
-          )}
+          )
+}
 
         </div>
       </main>
@@ -453,7 +454,7 @@ export default function Catalogue() {
           <div className="bg-[#f8f9fa] rounded-2xl w-full max-w-[440px] max-h-[90vh] shadow-xl p-6 flex flex-col overflow-hidden">
             
             {/* Modal Title (Sticky) */}
-            <h3 className="text-2xl font-bold text-gray-900 tracking-tight mb-4 shrink-0">
+            <h3 className="text-lg font-semibold text-gray-900 tracking-tight mb-4 shrink-0">
               {editingProduct ? 'Edit Product' : 'New Product'}
             </h3>
 
@@ -473,20 +474,20 @@ export default function Catalogue() {
 
                 {/* Input: Product Name */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Product Name</label>
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Product Name</label>
                   <input 
                     type="text"
                     required
                     placeholder="e.g. Matcha KitKat Premium"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full transition duration-150 text-gray-900 placeholder-gray-400 font-medium"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-150 text-gray-900 placeholder-gray-400 font-normal bg-white"
                   />
                 </div>
 
                 {/* Input: Price */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Price</label>
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Price</label>
                   <input 
                     type="number"
                     required
@@ -494,31 +495,31 @@ export default function Catalogue() {
                     placeholder="e.g. 120000"
                     value={formPrice}
                     onChange={(e) => setFormPrice(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full transition duration-150 text-gray-900 placeholder-gray-400 font-medium"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-150 text-gray-900 placeholder-gray-400 font-normal bg-white"
                   />
                 </div>
 
                 {/* Input: Description */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Description</label>
                   <textarea 
                     rows={2}
                     placeholder="Detail description of product..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full h-20 resize-none transition duration-150 text-gray-900 placeholder-gray-400 font-medium"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-150 text-gray-900 placeholder-gray-400 font-normal bg-white h-20 resize-none"
                   />
                 </div>
 
                 {/* Input: Picture URL */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Picture URL</label>
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Picture URL</label>
                   <input 
                     type="url"
                     placeholder="https://example.com/image.jpg"
                     value={formPhotoUrl}
                     onChange={(e) => setFormPhotoUrl(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full transition duration-150 text-gray-900 placeholder-gray-400 font-medium"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-150 text-gray-900 placeholder-gray-400 font-normal bg-white"
                   />
 
                   {formPhotoUrl && (

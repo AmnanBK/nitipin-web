@@ -57,7 +57,7 @@ export default function Login() {
         {/* Sisi Kiri: Form Login */}
         <div className="flex flex-col justify-center px-4 md:px-12 lg:px-16 py-8 overflow-y-auto h-full">
           <div className="max-w-md w-full mx-auto">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-2">Log In</h1>
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2">Log In</h1>
             <p className="text-gray-500 mb-8">
               If you don't have an account register <br />
               You can{' '}
@@ -74,12 +74,11 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Input Email */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email</label>
-                <div className="flex items-center border-b border-gray-300 py-2 focus-within:border-blue-600 transition-colors">
-                  {/* Icon Envelope */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-normal text-gray-600">Email</label>
+                <div className="relative flex items-center">
                   <svg
-                    className="h-5 w-5 text-gray-400 mr-3"
+                    className="absolute left-3.5 h-5 w-5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -97,7 +96,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-1 focus:outline-none text-base"
+                    className="w-full pl-11 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     required
                     disabled={isSubmitting}
                   />
@@ -105,12 +104,11 @@ export default function Login() {
               </div>
 
               {/* Input Password */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Password</label>
-                <div className="flex items-center border-b border-gray-300 py-2 focus-within:border-blue-600 transition-colors">
-                  {/* Icon Padlock */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-normal text-gray-600">Password</label>
+                <div className="relative flex items-center">
                   <svg
-                    className="h-5 w-5 text-gray-400 mr-3"
+                    className="absolute left-3.5 h-5 w-5 text-gray-400 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -128,15 +126,14 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your Password"
-                    className="appearance-none bg-transparent border-none w-full text-gray-800 placeholder-gray-400 py-1 focus:outline-none text-base"
+                    className="w-full pl-11 pr-11 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent transition-all"
                     required
                     disabled={isSubmitting}
                   />
-                  {/* Icon Visibility Toggle */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600 focus:outline-none ml-2 flex items-center justify-center"
+                    className="absolute right-3 text-gray-400 hover:text-gray-600 focus:outline-none flex items-center justify-center"
                     disabled={isSubmitting}
                   >
                     {showPassword ? (
@@ -172,7 +169,7 @@ export default function Login() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542 7z"
                         />
                       </svg>
                     )}
@@ -231,7 +228,7 @@ export default function Login() {
 
           {/* Label Bawah */}
           <div className="relative z-10 mt-4">
-            <h2 className="text-white text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight">
+            <h2 className="text-white text-3xl lg:text-4xl xl:text-5xl font-semibold tracking-tight">
               Log in to Nitipin
             </h2>
           </div>
