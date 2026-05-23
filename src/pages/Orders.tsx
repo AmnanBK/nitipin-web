@@ -213,10 +213,38 @@ export default function Orders() {
   // Proof Upload State
   const [showProofModal, setShowProofModal] = useState<boolean>(false);
   const [proofOrderId, setProofOrderId] = useState<number | null>(null);
-  const [proofPhotoUrl, setProofPhotoUrl] = useState<string>('');
   const [proofDescription, setProofDescription] = useState<string>('');
   const [uploadingProof, setUploadingProof] = useState<boolean>(false);
-  const [selectedProofFile, setSelectedProofFile] = useState<File | null>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProofFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setProofFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+  };
+
+  const handleCloseProofModal = () => {
+    setShowProofModal(false);
+    setProofOrderId(null);
+    setProofDescription('');
+    setProofFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+  };
 
   // Global toast system
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -464,17 +492,20 @@ export default function Orders() {
   const handleOpenProofModal = (orderId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setProofOrderId(orderId);
-    setProofPhotoUrl('');
-    setSelectedProofFile(null);
     setProofDescription('');
+    setProofFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
     setShowProofModal(true);
   };
 
   // Action: Submit Purchase Proof & transition to 'purchased'
   const handleUploadProof = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!proofOrderId || (!selectedProofFile && !proofPhotoUrl.trim())) {
-      showToast('Please attach a valid receipt file.', 'error');
+    if (!proofOrderId || (!proofFile && proofOrderId < 100)) {
+      showToast('Please select a receipt photo file.', 'error');
       return;
     }
 
@@ -488,13 +519,13 @@ export default function Orders() {
             _id: Math.random().toString(),
             order_id: proofOrderId,
             proof_type: 'purchase',
-            photo_url: proofPhotoUrl,
+            photo_url: previewUrl || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&fit=crop&q=80',
             uploader_type: 'traveler',
             description: proofDescription || 'Valid purchase receipt.'
           };
           setProofs(prev => [...prev, newMockProof]);
           showToast('Receipt uploaded & status updated successfully!');
-          setShowProofModal(false);
+          handleCloseProofModal();
           if (selectedOrder?.id === proofOrderId) {
             handleOpenDetail({ ...selectedOrder, status: 'purchased' });
           }
@@ -502,23 +533,25 @@ export default function Orders() {
         return;
       }
 
-      // 1. Upload Bukti Foto (FormData)
+      // 1. Upload Bukti Foto (FormData containing the photo file, type, and description)
       const formData = new FormData();
-      if (selectedProofFile) {
-        formData.append('photo', selectedProofFile);
+      if (proofFile) {
+        formData.append('photo', proofFile);
       }
       formData.append('proof_type', 'purchase');
       formData.append('description', proofDescription || 'Valid purchase receipt.');
 
       await api.post(`/api/orders/${proofOrderId}/proofs`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       // 2. Transition Status to Purchased
       await api.patch(`/api/orders/${proofOrderId}/purchased`);
 
       showToast('Receipt uploaded & status updated successfully!');
-      setShowProofModal(false);
+      handleCloseProofModal();
       fetchOrdersData();
 
       // Update detail view if open
@@ -1201,55 +1234,75 @@ export default function Orders() {
                   Please upload a photo of the purchase receipt for this item to update the status.
                 </p>
 
-                 {/* Receipt Image File Input */}
-                 <div className="space-y-1.5">
-                   <label className="block text-sm font-semibold text-gray-700">Attach Receipt Image File</label>
-                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
-                     <input
-                       type="file"
-                       accept="image/*"
-                       required={!proofPhotoUrl}
-                       onChange={(e) => {
-                         const file = e.target.files?.[0];
-                         if (file) {
-                           setSelectedProofFile(file);
-                           const reader = new FileReader();
-                           reader.onloadend = () => {
-                             setProofPhotoUrl(reader.result as string);
-                           };
-                           reader.readAsDataURL(file);
-                         }
-                       }}
-                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                     />
-                     <div className="flex flex-col items-center justify-center gap-1">
-                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6] mb-1">
-                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                           <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                         </svg>
-                       </div>
-                       <span className="text-xs font-bold text-gray-700">
-                         {selectedProofFile ? selectedProofFile.name : 'Choose a receipt file'}
-                       </span>
-                       <span className="text-[10px] text-gray-400 font-medium">
-                         Supports JPG, PNG, WEBP
-                       </span>
-                     </div>
-                   </div>
-
-                   {proofPhotoUrl && (
-                     <div className="mt-2 relative h-16 w-28 border border-gray-100 rounded-lg overflow-hidden bg-white shrink-0 shadow-sm">
-                       <img 
-                         src={proofPhotoUrl} 
-                         alt="Receipt Preview"
-                         className="h-full w-full object-cover"
-                         onError={(e) => {
-                           e.currentTarget.style.display = 'none';
-                         }}
-                       />
-                     </div>
-                   )}
-                 </div>
+                {/* Drag & Drop File Upload Area */}
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-semibold text-gray-700">Receipt Photo</label>
+                  
+                  {!previewUrl ? (
+                    <label
+                      htmlFor="proof-file"
+                      className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:border-blue-500 rounded-2xl p-6 cursor-pointer bg-white transition-all hover:bg-blue-50/20 group"
+                    >
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <svg
+                          className="w-10 h-10 text-gray-400 group-hover:text-blue-500 transition-colors duration-150 mb-2"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                          />
+                        </svg>
+                        <span className="text-xs font-bold text-gray-700 group-hover:text-blue-600 transition-colors duration-150">
+                          Upload receipt image
+                        </span>
+                        <span className="text-[10px] text-gray-400 mt-1">
+                          Drag and drop or click to browse
+                        </span>
+                      </div>
+                      <input
+                        type="file"
+                        id="proof-file"
+                        accept="image/*"
+                        required
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-inner group">
+                      <img
+                        src={previewUrl}
+                        alt="Receipt Preview"
+                        className="w-full h-40 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-2 transition duration-150 cursor-pointer shadow"
+                          title="Remove photo"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="p-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-gray-500 truncate max-w-[200px]">
+                          {proofFile?.name}
+                        </span>
+                        <span className="text-[9px] font-extrabold text-gray-400 bg-white border border-gray-100 px-1.5 py-0.5 rounded">
+                          {proofFile ? (proofFile.size / 1024).toFixed(1) : 0} KB
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Description */}
                 <div className="space-y-1.5">
@@ -1268,8 +1321,8 @@ export default function Orders() {
               <div className="flex justify-end items-center gap-3 mt-5 pt-2 border-t border-gray-100 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setShowProofModal(false)}
-                  className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-500 font-semibold text-xs rounded-xl py-2 px-5 transition duration-150 cursor-pointer"
+                  onClick={handleCloseProofModal}
+                  className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-500 font-bold text-xs rounded-xl py-2 px-5 transition duration-150 cursor-pointer"
                 >
                   Cancel
                 </button>
