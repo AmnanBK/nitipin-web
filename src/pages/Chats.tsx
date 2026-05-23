@@ -91,17 +91,43 @@ export default function Chats() {
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
-  
-  // Toast notifications for new messages
-  const [toast, setToast] = useState<{ show: boolean; title: string; message: string } | null>(null);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [activeToast, setActiveToast] = useState<{ senderName: string; message: string } | null>(null);
   const selectedBuyerIdRef = useRef<number | null>(null);
 
-  // Sync selectedBuyerId with Ref to prevent stale closure in socket listener
+  // Sync selectedBuyerId to ref to avoid stale closures in socket callback
   useEffect(() => {
     selectedBuyerIdRef.current = selectedBuyerId;
   }, [selectedBuyerId]);
+
+  // Load and manage client-side read messages to bypass missing backend read endpoint
+  const [readMessageIds, setReadMessageIds] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem(`read_msg_ids_${user?.id || 0}`);
+      return stored ? new Set(JSON.parse(stored)) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  });
+
+  // Helper to mark messages of a buyer as read in localStorage and state
+  const markMessagesAsReadLocally = (msgs: Message[]) => {
+    if (msgs.length === 0) return;
+    setReadMessageIds((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      msgs.forEach((m) => {
+        if (m.sender_id.startsWith('buyer_') && !next.has(m._id)) {
+          next.add(m._id);
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem(`read_msg_ids_${user?.id || 0}`, JSON.stringify(Array.from(next)));
+      }
+      return next;
+    });
+  };
 
   // Fetch traveler profile photo link
   useEffect(() => {
@@ -184,20 +210,15 @@ export default function Chats() {
       if (!silent) setLoadingMessages(true);
       const res = await api.get(`/api/chats/messages?with_user_id=${buyerId}`);
       if (res.data.data) {
-        // Since this contact is currently open, mark all buyer-sent messages as read locally
-        const readMessages = res.data.data.map((msg: Message) => {
-          if (msg.sender_id.startsWith('buyer_')) {
-            return { ...msg, is_read: true };
-          }
-          return msg;
-        });
-
-        setMessages(readMessages);
+        const fetchedMsgs = res.data.data || [];
+        setMessages(fetchedMsgs);
         // Also update message history map so that the sidebar's preview stays instantly updated!
         setMessagesMap((prev) => ({
           ...prev,
-          [buyerId.toString()]: readMessages
+          [buyerId.toString()]: fetchedMsgs
         }));
+        // Mark these messages as read in localStorage
+        markMessagesAsReadLocally(fetchedMsgs);
       }
     } catch (err) {
       console.warn(`Failed to load messages from backend with buyer ${buyerId}, fallback to empty:`, err);
@@ -216,6 +237,11 @@ export default function Chats() {
       setMessagesMap((prev) => {
         const updated = { ...prev };
         const key = selectedBuyerId.toString();
+        const conversation = updated[key] || [];
+
+        // Persist to localStorage too!
+        markMessagesAsReadLocally(conversation);
+
         if (updated[key]) {
           updated[key] = updated[key].map((msg) => {
             if (msg.sender_id.startsWith('buyer_')) {
@@ -252,87 +278,108 @@ export default function Chats() {
 
     const handleReceiveMessage = (msg: Message) => {
       console.log('[Socket] receiveMessage:', msg);
-      
       const activeId = selectedBuyerIdRef.current;
       const isFromActiveBuyer = msg.sender_id === `buyer_${activeId}`;
       const isToActiveBuyer = msg.receiver_id === `buyer_${activeId}`;
 
-      // 1. If currently in the active conversation, append message as read and auto-read
+      // 1. Append message to the active conversation panel ONLY if it belongs to this active buyer conversation
       if (activeId !== null && (isFromActiveBuyer || isToActiveBuyer)) {
-        const readMsg = { ...msg, is_read: true };
         setMessages((prev) => {
           if (prev.some((m) => m._id === msg._id)) return prev;
-          return [...prev, readMsg];
+          return [...prev, msg];
         });
+        // Dynamically mark as read in background if we are currently looking at the chat
         api.put(`/api/chats/read/${activeId}`).catch(() => {});
-      } else {
-        // 2. Play a premium notification sound if it's from another conversation
-        try {
-          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-500.wav');
-          audio.volume = 0.45;
-          audio.play();
-        } catch (e) {
-          console.warn('[Socket] Audio notification failed:', e);
-        }
+        // Also persist read locally!
+        markMessagesAsReadLocally([msg]);
       }
 
-      // Extract sender/receiver ID for sidebar preview updating
-      const senderId = msg.sender_id.startsWith('buyer_')
+      // 2. Identify the other participant's buyer ID string
+      const buyerIdStr = msg.sender_id.startsWith('buyer_')
         ? msg.sender_id.split('_')[1]
         : msg.receiver_id.split('_')[1];
 
-      if (senderId) {
-        // 3. Ensure the contact exists dynamically in the left column list
-        setContactIds((prev) => {
-          if (prev.includes(senderId)) return prev;
+      if (buyerIdStr) {
+        // Update the sidebar preview list map
+        setMessagesMap((prev) => {
+          const currentList = prev[buyerIdStr] || [];
+          if (currentList.some((m) => m._id === msg._id)) return prev;
+          return { ...prev, [buyerIdStr]: [...currentList, msg] };
+        });
 
-          // Fetch new buyer profile in the background
-          api.get(`/api/buyers/${senderId}`)
-            .then((res) => {
+        // 3. DYNAMIC CONTACT REGISTRATION & RE-ORDERING: Move sender to the top of the sidebar list instantly!
+        setContactIds((prev) => {
+          const cleanId = String(buyerIdStr);
+          const isNew = !prev.map(String).includes(cleanId);
+          
+          if (isNew) {
+            // Fetch the brand new buyer profile dynamically in the background
+            api.get(`/api/buyers/${cleanId}`).then((res) => {
               if (res.data.status === 'success' || res.data.data) {
                 setBuyerProfiles((prevProfiles) => ({
                   ...prevProfiles,
-                  [senderId]: res.data.data
+                  [cleanId]: res.data.data
                 }));
-                // Show a dynamic toast notification for the new contact
-                setToast({
-                  show: true,
-                  title: `New Message from ${res.data.data.name || 'Buyer'}`,
-                  message: msg.message
-                });
-                setTimeout(() => setToast(null), 4000);
               }
-            })
-            .catch((err) => console.error('Failed to fetch profile for new contact:', err));
-
-          return [senderId, ...prev];
-        });
-
-        // 4. Update messagesMap to trigger unread badge update & preview message update
-        setMessagesMap((prev) => {
-          const currentList = prev[senderId] || [];
-          if (currentList.some((m) => m._id === msg._id)) return prev;
-
-          // If the buyer is already cached but not the active conversation, trigger a toast alert
-          if (activeId === null || activeId !== Number(senderId)) {
-            const profile = buyerProfiles[senderId];
-            if (profile) {
-              setToast({
-                show: true,
-                title: `New Message from ${profile.name}`,
-                message: msg.message
-              });
-              setTimeout(() => setToast(null), 4000);
-            }
+            }).catch((err) => {
+              console.warn(`Failed to fetch buyer details for new connection: ${cleanId}`, err);
+            });
           }
 
-          // If this is the active conversation, mark the message as read locally
-          const finalMsg = (activeId !== null && activeId === Number(senderId))
-            ? { ...msg, is_read: true }
-            : msg;
-
-          return { ...prev, [senderId]: [...currentList, finalMsg] };
+          const filtered = prev.map(String).filter((x) => x !== cleanId);
+          return [cleanId, ...filtered];
         });
+
+        // 4. CHIME SOUND & PUSH TOAST NOTIFICATION
+        const isFromMe = msg.sender_id.startsWith('traveler_');
+        if (!isFromActiveBuyer && !isFromMe) {
+          // Play premium Web Audio synthesized ping sound
+          try {
+            const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+            osc.connect(gain);
+            gain.connect(context.destination);
+
+            osc.frequency.setValueAtTime(880, context.currentTime); // A5 note
+            gain.gain.setValueAtTime(0, context.currentTime);
+            gain.gain.linearRampToValueAtTime(0.06, context.currentTime + 0.05); // quick attack
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.35); // smooth exponential decay
+
+            osc.start();
+            osc.stop(context.currentTime + 0.35);
+          } catch (e) {
+            // Audio context blocked by browser gesture policies
+          }
+
+          // Trigger sleek visually animatable notification toast
+          const triggerToast = (senderName: string) => {
+            setActiveToast({
+              senderName,
+              message: msg.message
+            });
+
+            // Auto dismiss toast after 4 seconds
+            setTimeout(() => {
+              setActiveToast((prev) => {
+                if (prev?.message === msg.message) return null;
+                return prev;
+              });
+            }, 4000);
+          };
+
+          const existingProfile = buyerProfiles[buyerIdStr];
+          if (existingProfile) {
+            triggerToast(existingProfile.name);
+          } else {
+            api.get(`/api/buyers/${buyerIdStr}`).then((res) => {
+              const name = res.data.data?.name || `Buyer #${buyerIdStr}`;
+              triggerToast(name);
+            }).catch(() => {
+              triggerToast(`Buyer #${buyerIdStr}`);
+            });
+          }
+        }
       }
     };
 
@@ -360,13 +407,131 @@ export default function Chats() {
     };
   }, [user]);
 
+  // Failsafe Background Polling: Syncs contacts and messages in background every 8 seconds if WebSocket is offline
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const interval = setInterval(async () => {
+      // Only execute this intensive fallback polling if WebSocket is NOT connected!
+      if (!socketConnected) {
+        console.log('[Fallback Polling] Syncing chat data in background...');
+        try {
+          const res = await api.get('/api/chats/contacts');
+          const ids: string[] = res.data.data || [];
+
+          if (ids.length > 0) {
+            const cleanIds = ids.map(String);
+            
+            // Sync in parallel for all contacts
+            await Promise.all(
+              cleanIds.map(async (id) => {
+                try {
+                  const msgRes = await api.get(`/api/chats/messages?with_user_id=${id}`);
+                  const fetchedMsgs: Message[] = msgRes.data.data || [];
+
+                  // Compare if messages changed
+                  setMessagesMap((prev) => {
+                    const localMsgs = prev[id] || [];
+                    
+                    const hasChanged = localMsgs.length !== fetchedMsgs.length || 
+                      (localMsgs.length > 0 && fetchedMsgs.length > 0 && 
+                       localMsgs[localMsgs.length - 1]._id !== fetchedMsgs[fetchedMsgs.length - 1]._id);
+
+                    if (hasChanged) {
+                      // If it's the currently active chat, update active messages panel too!
+                      if (selectedBuyerIdRef.current === Number(id)) {
+                        setMessages(fetchedMsgs);
+                        // Mark active chat messages as read in localStorage!
+                        markMessagesAsReadLocally(fetchedMsgs);
+                      }
+                      
+                      // Also trigger Toast/Chime if there's a new unread message not sent by traveler
+                      if (fetchedMsgs.length > 0) {
+                        const newMsg = fetchedMsgs[fetchedMsgs.length - 1];
+                        const isFromMe = newMsg.sender_id.startsWith('traveler_');
+                        const isFromActive = selectedBuyerIdRef.current === Number(id);
+
+                        if (!isFromMe && !isFromActive) {
+                          const alreadyProcessed = localMsgs.some((m) => m._id === newMsg._id);
+                          if (!alreadyProcessed) {
+                            // Synthesize Audio Chime
+                            try {
+                              const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+                              const osc = context.createOscillator();
+                              const gain = context.createGain();
+                              osc.connect(gain);
+                              gain.connect(context.destination);
+                              osc.frequency.setValueAtTime(880, context.currentTime);
+                              gain.gain.setValueAtTime(0, context.currentTime);
+                              gain.gain.linearRampToValueAtTime(0.06, context.currentTime + 0.05);
+                              gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.35);
+                              osc.start();
+                              osc.stop(context.currentTime + 0.35);
+                            } catch (e) {}
+
+                            // Display Toast
+                            const existingProfile = buyerProfiles[id];
+                            const name = existingProfile?.name || `Buyer #${id}`;
+                            setActiveToast({
+                              senderName: name,
+                              message: newMsg.message
+                            });
+                            
+                            setTimeout(() => {
+                              setActiveToast((prev) => (prev?.message === newMsg.message ? null : prev));
+                            }, 4000);
+                          }
+                        }
+                      }
+
+                      return { ...prev, [id]: fetchedMsgs };
+                    }
+                    return prev;
+                  });
+
+                  // Fetch profile if it's a new contact not yet in buyerProfiles
+                  if (!buyerProfiles[id]) {
+                    const buyerRes = await api.get(`/api/buyers/${id}`);
+                    if (buyerRes.data.status === 'success' || buyerRes.data.data) {
+                      setBuyerProfiles((prevProfiles) => ({
+                        ...prevProfiles,
+                        [id]: buyerRes.data.data
+                      }));
+                    }
+                  }
+
+                } catch (err) {
+                  console.warn(`[Fallback Polling] Error syncing for contact ID ${id}`, err);
+                }
+              })
+            );
+
+            // Update contactIds array if new contacts arrived or order changed
+            setContactIds((prev) => {
+              const prevClean = prev.map(String);
+              const isDiff = prevClean.length !== cleanIds.length || prevClean.some((v, i) => v !== cleanIds[i]);
+              if (isDiff) {
+                return cleanIds;
+              }
+              return prev;
+            });
+          }
+        } catch (err) {
+          console.warn('[Fallback Polling] Error syncing contacts:', err);
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [socketConnected, buyerProfiles]);
+
   // Auto-scroll messages list to the bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Send message via socket.io (real-time)
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBuyerId || !inputText.trim()) return;
 
@@ -390,8 +555,40 @@ export default function Chats() {
       return { ...prev, [selectedBuyerId.toString()]: [...currentList, optimisticMsg] };
     });
 
-    const socket = getSocket();
-    socket.emit('sendMessage', { receiverId: selectedBuyerId, message: messageText });
+    // Move current contact to the top of the contact list instantly
+    setContactIds((prev) => {
+      const cleanId = selectedBuyerId.toString();
+      const filtered = prev.map(String).filter((x) => x !== cleanId);
+      return [cleanId, ...filtered];
+    });
+
+    if (socketConnected) {
+      const socket = getSocket();
+      socket.emit('sendMessage', { receiverId: selectedBuyerId, message: messageText });
+    } else {
+      // Failsafe REST HTTP POST Fallback if WebSocket is offline!
+      try {
+        const res = await api.post('/api/chats', { receiver_id: selectedBuyerId, message: messageText });
+        if (res.data.data) {
+          const confirmedMsg = res.data.data;
+          
+          // Swap the optimistic temp message with the confirmed server message
+          setMessages((prev) =>
+            prev.map((m) => (m._id.startsWith('temp_') && m.message === messageText ? confirmedMsg : m))
+          );
+          
+          setMessagesMap((prev) => {
+            const currentList = prev[selectedBuyerId.toString()] || [];
+            const updated = currentList.map((m) =>
+              m._id.startsWith('temp_') && m.message === messageText ? confirmedMsg : m
+            );
+            return { ...prev, [selectedBuyerId.toString()]: updated };
+          });
+        }
+      } catch (err) {
+        console.error('[HTTP Fallback] Failed to send message:', err);
+      }
+    }
   };
 
   const activeBuyer = selectedBuyerId !== null ? buyerProfiles[selectedBuyerId.toString()] : null;
@@ -426,40 +623,7 @@ export default function Chats() {
   );
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 font-sans relative">
-      
-      {/* Self-contained CSS Toast Keyframes */}
-      <style>{`
-        @keyframes slideInRight {
-          from {
-            transform: translateX(120%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        .animate-slide-in-right {
-          animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-      `}</style>
-
-      {/* Floating Dynamic Slide-in Toast Notification */}
-      {toast && toast.show && (
-        <div className="fixed top-6 right-6 z-50 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 max-w-sm flex items-center gap-3 animate-slide-in-right transition-all">
-          <div className="w-10 h-10 rounded-full bg-blue-50 text-[#1e53e6] flex items-center justify-center shrink-0 border border-blue-100">
-            <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </div>
-          <div className="min-w-0 flex-1">
-            <h4 className="font-bold text-[10px] text-[#1e53e6] uppercase tracking-wider">New Message</h4>
-            <h4 className="font-semibold text-sm text-gray-900 truncate mt-0.5">{toast.title}</h4>
-            <p className="text-xs text-gray-500 truncate mt-0.5">{toast.message}</p>
-          </div>
-        </div>
-      )}
+    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 font-sans">
       
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
@@ -578,9 +742,9 @@ export default function Chats() {
           {/* 1. Chats Contacts Column (Left Pane) */}
           <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col shrink-0">
             {/* Header */}
-            <div className="p-6 border-b border-gray-100 shrink-0">
-              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Chats</h2>
-              <p className="text-sm text-gray-500 mt-1 font-normal">Talk with your buyers</p>
+            <div className="p-4 border-b border-gray-100 shrink-0">
+              <h2 className="text-lg font-semibold text-[#1e53e6]">Chats</h2>
+              <p className="text-xs text-gray-400 mt-1">Talk with your buyers</p>
             </div>
 
             {/* Contacts list container */}
@@ -622,9 +786,13 @@ export default function Chats() {
                   const isActive = selectedBuyerId === Number(id);
                   const conversation = messagesMap[id];
 
-                  // Calculate unread count dynamically (only buyer-sent unread messages)
+                  // Calculate unread count dynamically (only buyer-sent unread messages, filtered by local readMessageIds)
                   const unreadCount = conversation
-                    ? conversation.filter((msg) => msg.sender_id.startsWith('buyer_') && !msg.is_read).length
+                    ? conversation.filter((msg) => 
+                        msg.sender_id.startsWith('buyer_') && 
+                        !msg.is_read && 
+                        !readMessageIds.has(msg._id)
+                      ).length
                     : 0;
                   
                   // Retrieve the last message dynamically
@@ -664,7 +832,7 @@ export default function Chats() {
                             {profile?.name || `Buyer #${id}`}
                           </h4>
                           {unreadCount > 0 && (
-                            <span className="w-5 h-5 rounded-full bg-rose-500 text-white font-semibold text-[10px] flex items-center justify-center shrink-0 animate-pulse">
+                            <span className="w-5 h-5 rounded-full bg-rose-500 text-white font-semibold text-[10px] flex items-center justify-center shrink-0">
                               {unreadCount}
                             </span>
                           )}
@@ -722,14 +890,14 @@ export default function Chats() {
                     </div>
                   </div>
                   {/* Socket connection status indicator */}
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span
-                      className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}
-                    />
-                    <span className="text-[10px] text-gray-400 font-normal">
-                      {socketConnected ? 'Live' : 'Reconnecting...'}
-                    </span>
-                  </div>
+                  {socketConnected && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[10px] text-gray-400 font-normal">
+                        Live
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Messages Box scrollable list */}
@@ -812,6 +980,26 @@ export default function Chats() {
         </div>
 
       </main>
+
+      {/* Real-time Chime Notification Toast */}
+      {activeToast && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-4 shadow-2xl shadow-blue-500/15 w-80 transition duration-300 animate-in fade-in slide-in-from-top-4">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-[#1e53e6] flex items-center justify-center font-bold text-sm shrink-0 border border-blue-100 shadow-inner">
+            {activeToast.senderName[0].toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h5 className="font-semibold text-xs text-gray-500 uppercase tracking-wider leading-none">New Message</h5>
+            <h4 className="font-bold text-sm text-gray-900 truncate mt-1">{activeToast.senderName}</h4>
+            <p className="text-xs text-gray-600 truncate mt-0.5 font-normal leading-normal">{activeToast.message}</p>
+          </div>
+          <button 
+            onClick={() => setActiveToast(null)} 
+            className="text-gray-400 hover:text-gray-600 transition cursor-pointer self-start p-0.5"
+          >
+            <Icons.Close />
+          </button>
+        </div>
+      )}
 
     </div>
   );
