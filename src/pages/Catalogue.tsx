@@ -127,6 +127,20 @@ export default function Catalogue() {
     fetchCatalogueData();
   }, [user]);
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingProduct(null);
+    setFormName('');
+    setFormPrice('');
+    setFormDescription('');
+    if (formPhotoUrl && formPhotoUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(formPhotoUrl);
+    }
+    setFormPhotoUrl('');
+    setSelectedProductFile(null);
+    setModalError(null);
+  };
+
   // Open Modal for Create
   const handleOpenCreate = () => {
     setEditingProduct(null);
@@ -165,25 +179,37 @@ export default function Catalogue() {
       setModalLoading(true);
       setModalError(null);
 
-      const payload = {
-        product_name: formName,
-        price: Number(formPrice),
-        description: formDescription || null,
-        photo_url: formPhotoUrl || null
-      };
+      const formData = new FormData();
+      formData.append('product_name', formName);
+      formData.append('price', String(Number(formPrice)));
+      formData.append('description', formDescription || '');
+      
+      if (selectedProductFile) {
+        formData.append('photo', selectedProductFile);
+      } else {
+        formData.append('photo_url', formPhotoUrl || '');
+      }
 
       if (editingProduct) {
         // UPDATE (PUT /api/products/:id)
-        await api.put(`/api/products/${editingProduct.id}`, payload);
+        await api.put(`/api/products/${editingProduct.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         showToast('Product updated successfully!');
       } else {
         // CREATE (POST /api/products)
-        await api.post('/api/products', payload);
+        await api.post('/api/products', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         showToast('Product added successfully!');
       }
 
       // Success, close modal and reload list
-      setShowModal(false);
+      handleCloseModal();
       fetchCatalogueData();
     } catch (err: any) {
       console.error('Form Submit Error:', err);
@@ -525,11 +551,11 @@ export default function Catalogue() {
                         const file = e.target.files?.[0];
                         if (file) {
                           setSelectedProductFile(file);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setFormPhotoUrl(reader.result as string);
-                          };
-                          reader.readAsDataURL(file);
+                          if (formPhotoUrl && formPhotoUrl.startsWith('blob:')) {
+                            URL.revokeObjectURL(formPhotoUrl);
+                          }
+                          const preview = URL.createObjectURL(file);
+                          setFormPhotoUrl(preview);
                         }
                       }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -568,7 +594,7 @@ export default function Catalogue() {
               <div className="flex justify-end items-center gap-3 mt-4 pt-2 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                   className="bg-white hover:bg-gray-50 border border-gray-200 text-blue-600 hover:text-blue-700 font-bold text-sm rounded-xl py-2.5 px-8 transition duration-150 cursor-pointer"
                 >
                   Cancel
