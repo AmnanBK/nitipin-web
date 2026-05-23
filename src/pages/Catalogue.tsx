@@ -99,6 +99,7 @@ export default function Catalogue() {
   const [formPrice, setFormPrice] = useState<string>('');
   const [formDescription, setFormDescription] = useState<string>('');
   const [formPhotoUrl, setFormPhotoUrl] = useState<string>('');
+  const [selectedProductFile, setSelectedProductFile] = useState<File | null>(null);
 
   // Fetch Catalogue and Profile
   const fetchCatalogueData = async () => {
@@ -133,6 +134,7 @@ export default function Catalogue() {
     setFormPrice('');
     setFormDescription('');
     setFormPhotoUrl('');
+    setSelectedProductFile(null);
     setModalError(null);
     setShowModal(true);
   };
@@ -146,6 +148,7 @@ export default function Catalogue() {
     setFormPrice(String(Math.round(rawPrice || 0)));
     setFormDescription(product.description || '');
     setFormPhotoUrl(product.photo_url || '');
+    setSelectedProductFile(null);
     setModalError(null);
     setShowModal(true);
   };
@@ -511,19 +514,43 @@ export default function Catalogue() {
                   />
                 </div>
 
-                {/* Input: Picture URL */}
+                {/* Input: Attach Picture File */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-normal text-gray-600 mb-1">Picture URL</label>
-                  <input 
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                    value={formPhotoUrl}
-                    onChange={(e) => setFormPhotoUrl(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-150 text-gray-900 placeholder-gray-400 font-normal bg-white"
-                  />
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Product Image</label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-2xl p-5 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedProductFile(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setFormPhotoUrl(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6]">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 3.75 0 11-.75 0 .375 3.75 0 01.75 0z" />
+                        </svg>
+                      </div>
+                      <span className="text-xs font-bold text-gray-700">
+                        {selectedProductFile ? selectedProductFile.name : 'Attach a product image file'}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium">
+                        Supports JPG, PNG, WEBP
+                      </span>
+                    </div>
+                  </div>
 
                   {formPhotoUrl && (
-                    <div className="mt-2 relative h-16 w-28 border border-gray-100 rounded-lg overflow-hidden bg-white shrink-0">
+                    <div className="mt-2 relative h-16 w-28 border border-gray-100 rounded-lg overflow-hidden bg-white shrink-0 shadow-sm">
                       <img 
                         src={formPhotoUrl} 
                         alt="Preview"

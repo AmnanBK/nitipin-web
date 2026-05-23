@@ -81,6 +81,7 @@ export default function Profile() {
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [tempPhotoUrl, setTempPhotoUrl] = useState<string>('');
   const [savingPhotoUrl, setSavingPhotoUrl] = useState<boolean>(false);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
 
   // Mobile sidebar view state
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
@@ -155,18 +156,30 @@ export default function Profile() {
   // Handle Avatar Click - Open Modal
   const handleAvatarClick = () => {
     setTempPhotoUrl(profilePhotoUrl || '');
+    setSelectedPhotoFile(null);
     setShowPhotoModal(true);
   };
 
-  // Save/Apply Profile Photo Link via PUT API
+  // Save/Apply Profile Photo via PUT API
   const handleApplyPhotoUrl = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) return;
     try {
       setSavingPhotoUrl(true);
-      const res = await api.put(`/api/travelers/${user.id}`, {
-        profile_photo: tempPhotoUrl.trim() || null
-      });
+      
+      let res;
+      if (selectedPhotoFile) {
+        const formData = new FormData();
+        formData.append('photo', selectedPhotoFile);
+        res = await api.put(`/api/travelers/${user.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        res = await api.put(`/api/travelers/${user.id}`, {
+          profile_photo: tempPhotoUrl.trim() || null
+        });
+      }
+
       if (res.data.status === 'success') {
         const updatedProf: TravelerProfile = res.data.data;
         setProfile(updatedProf);
@@ -175,7 +188,7 @@ export default function Profile() {
         setShowPhotoModal(false);
       }
     } catch (err: any) {
-      console.error('Update photo URL error:', err);
+      console.error('Update photo error:', err);
       showToast(err.response?.data?.message || 'Failed to update profile photo.', 'error');
     } finally {
       setSavingPhotoUrl(false);
@@ -596,9 +609,9 @@ export default function Profile() {
           <div className="relative bg-white rounded-3xl w-full max-w-md p-6 md:p-8 shadow-2xl border border-gray-150 transform transition-all duration-300 scale-100 flex flex-col gap-6 animate-scale-in">
             {/* Header */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 leading-none">Update Profile Photo Link</h3>
+              <h3 className="text-lg font-semibold text-gray-900 leading-none">Update Profile Photo</h3>
               <p className="text-xs text-gray-400 mt-2 font-semibold leading-relaxed">
-                Provide a direct URL to your new profile image. It will update instantly across your dashboard.
+                Choose a picture from your computer to upload as your profile photo.
               </p>
             </div>
 
@@ -630,18 +643,35 @@ export default function Profile() {
             {/* Input Form */}
             <form onSubmit={handleApplyPhotoUrl} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-normal text-gray-600 uppercase tracking-wider">Profile Photo URL</label>
-                <input
-                  type="url"
-                  required
-                  value={tempPhotoUrl}
-                  onChange={(e) => setTempPhotoUrl(e.target.value)}
-                  placeholder="e.g., https://example.com/photo.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
-                />
-                <span className="text-[10px] text-gray-400 block font-semibold leading-relaxed">
-                  Tip: Paste direct link ending in JPG, PNG, WEBP, or any hosted cloud storage URL.
-                </span>
+                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Attach Photo File</label>
+                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    required={!tempPhotoUrl}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSelectedPhotoFile(file);
+                        setTempPhotoUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6]">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-bold text-gray-700">
+                      {selectedPhotoFile ? selectedPhotoFile.name : 'Choose a file or drag it here'}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      Supports JPG, PNG, WEBP up to 5MB
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -655,10 +685,10 @@ export default function Profile() {
                 </button>
                 <button
                   type="submit"
-                  disabled={savingPhotoUrl}
+                  disabled={savingPhotoUrl || (!selectedPhotoFile && !tempPhotoUrl)}
                   className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
                 >
-                  {savingPhotoUrl ? 'Applying...' : 'Apply URL'}
+                  {savingPhotoUrl ? 'Uploading...' : 'Upload File'}
                 </button>
               </div>
             </form>

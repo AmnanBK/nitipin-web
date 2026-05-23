@@ -216,6 +216,7 @@ export default function Orders() {
   const [proofPhotoUrl, setProofPhotoUrl] = useState<string>('');
   const [proofDescription, setProofDescription] = useState<string>('');
   const [uploadingProof, setUploadingProof] = useState<boolean>(false);
+  const [selectedProofFile, setSelectedProofFile] = useState<File | null>(null);
 
   // Global toast system
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -464,6 +465,7 @@ export default function Orders() {
     e.stopPropagation();
     setProofOrderId(orderId);
     setProofPhotoUrl('');
+    setSelectedProofFile(null);
     setProofDescription('');
     setShowProofModal(true);
   };
@@ -471,8 +473,8 @@ export default function Orders() {
   // Action: Submit Purchase Proof & transition to 'purchased'
   const handleUploadProof = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!proofOrderId || !proofPhotoUrl.trim()) {
-      showToast('Please enter a valid receipt photo URL.', 'error');
+    if (!proofOrderId || (!selectedProofFile && !proofPhotoUrl.trim())) {
+      showToast('Please attach a valid receipt file.', 'error');
       return;
     }
 
@@ -500,11 +502,16 @@ export default function Orders() {
         return;
       }
 
-      // 1. Upload Bukti Foto (JSON API body containing photo_url)
-      await api.post(`/api/orders/${proofOrderId}/proofs`, {
-        photo_url: proofPhotoUrl,
-        proof_type: 'purchase',
-        description: proofDescription || 'Valid purchase receipt.'
+      // 1. Upload Bukti Foto (FormData)
+      const formData = new FormData();
+      if (selectedProofFile) {
+        formData.append('photo', selectedProofFile);
+      }
+      formData.append('proof_type', 'purchase');
+      formData.append('description', proofDescription || 'Valid purchase receipt.');
+
+      await api.post(`/api/orders/${proofOrderId}/proofs`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       // 2. Transition Status to Purchased
@@ -1194,21 +1201,55 @@ export default function Orders() {
                   Please upload a photo of the purchase receipt for this item to update the status.
                 </p>
 
-                {/* Receipt Image URL Input */}
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-normal text-gray-600">Receipt Image URL</label>
-                  <input
-                    type="url"
-                    required
-                    placeholder="https://example.com/receipt.jpg"
-                    value={proofPhotoUrl}
-                    onChange={(e) => setProofPhotoUrl(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-900 font-normal bg-white"
-                  />
-                  <p className="text-[10px] text-gray-400">
-                    Provide a direct web link to the purchase receipt photo.
-                  </p>
-                </div>
+                 {/* Receipt Image File Input */}
+                 <div className="space-y-1.5">
+                   <label className="block text-sm font-semibold text-gray-700">Attach Receipt Image File</label>
+                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                     <input
+                       type="file"
+                       accept="image/*"
+                       required={!proofPhotoUrl}
+                       onChange={(e) => {
+                         const file = e.target.files?.[0];
+                         if (file) {
+                           setSelectedProofFile(file);
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             setProofPhotoUrl(reader.result as string);
+                           };
+                           reader.readAsDataURL(file);
+                         }
+                       }}
+                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                     />
+                     <div className="flex flex-col items-center justify-center gap-1">
+                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6] mb-1">
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                         </svg>
+                       </div>
+                       <span className="text-xs font-bold text-gray-700">
+                         {selectedProofFile ? selectedProofFile.name : 'Choose a receipt file'}
+                       </span>
+                       <span className="text-[10px] text-gray-400 font-medium">
+                         Supports JPG, PNG, WEBP
+                       </span>
+                     </div>
+                   </div>
+
+                   {proofPhotoUrl && (
+                     <div className="mt-2 relative h-16 w-28 border border-gray-100 rounded-lg overflow-hidden bg-white shrink-0 shadow-sm">
+                       <img 
+                         src={proofPhotoUrl} 
+                         alt="Receipt Preview"
+                         className="h-full w-full object-cover"
+                         onError={(e) => {
+                           e.currentTarget.style.display = 'none';
+                         }}
+                       />
+                     </div>
+                   )}
+                 </div>
 
                 {/* Description */}
                 <div className="space-y-1.5">
