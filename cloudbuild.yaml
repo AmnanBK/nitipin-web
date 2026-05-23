@@ -1,0 +1,57 @@
+steps:
+  # Build the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_BASE_URL=https://nitipin-gateway-729492539702.us-central1.run.app'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:$COMMIT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:latest'
+      - '.'
+    id: 'build-web'
+
+  # Push the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:$COMMIT_SHA'
+    id: 'push-web'
+    waitFor: ['build-web']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:latest'
+    id: 'push-web-latest'
+    waitFor: ['build-web']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'nitipin-web'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+    id: 'deploy-web'
+    waitFor: ['push-web']
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/jastip-registry/nitipin-web:latest'
+
+substitutions:
+  _REGION: us-central1
+
+options:
+  logging: CLOUD_LOGGING_ONLY
