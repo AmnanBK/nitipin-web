@@ -91,8 +91,17 @@ export default function Chats() {
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
+  
+  // Toast notifications for new messages
+  const [toast, setToast] = useState<{ show: boolean; title: string; message: string } | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const selectedBuyerIdRef = useRef<number | null>(null);
+
+  // Sync selectedBuyerId with Ref to prevent stale closure in socket listener
+  useEffect(() => {
+    selectedBuyerIdRef.current = selectedBuyerId;
+  }, [selectedBuyerId]);
 
   // Fetch traveler profile photo link
   useEffect(() => {
@@ -235,18 +244,79 @@ export default function Chats() {
 
     const handleReceiveMessage = (msg: Message) => {
       console.log('[Socket] receiveMessage:', msg);
-      // Append to active conversation if it's from the currently selected contact
-      setMessages((prev) => {
-        // Deduplicate by _id
-        if (prev.some((m) => m._id === msg._id)) return prev;
-        return [...prev, msg];
-      });
-      // Update the sidebar preview map too
-      const senderId = msg.sender_id.split('_')[1];
+      
+      const activeId = selectedBuyerIdRef.current;
+      const isFromActiveBuyer = msg.sender_id === `buyer_${activeId}`;
+      const isToActiveBuyer = msg.receiver_id === `buyer_${activeId}`;
+
+      // 1. If currently in the active conversation, append message and auto-read
+      if (activeId !== null && (isFromActiveBuyer || isToActiveBuyer)) {
+        setMessages((prev) => {
+          if (prev.some((m) => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
+        api.put(`/api/chats/read/${activeId}`).catch(() => {});
+      } else {
+        // 2. Play a premium notification sound if it's from another conversation
+        try {
+          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-500.wav');
+          audio.volume = 0.45;
+          audio.play();
+        } catch (e) {
+          console.warn('[Socket] Audio notification failed:', e);
+        }
+      }
+
+      // Extract sender/receiver ID for sidebar preview updating
+      const senderId = msg.sender_id.startsWith('buyer_')
+        ? msg.sender_id.split('_')[1]
+        : msg.receiver_id.split('_')[1];
+
       if (senderId) {
+        // 3. Ensure the contact exists dynamically in the left column list
+        setContactIds((prev) => {
+          if (prev.includes(senderId)) return prev;
+
+          // Fetch new buyer profile in the background
+          api.get(`/api/buyers/${senderId}`)
+            .then((res) => {
+              if (res.data.status === 'success' || res.data.data) {
+                setBuyerProfiles((prevProfiles) => ({
+                  ...prevProfiles,
+                  [senderId]: res.data.data
+                }));
+                // Show a dynamic toast notification for the new contact
+                setToast({
+                  show: true,
+                  title: `New Message from ${res.data.data.name || 'Buyer'}`,
+                  message: msg.message
+                });
+                setTimeout(() => setToast(null), 4000);
+              }
+            })
+            .catch((err) => console.error('Failed to fetch profile for new contact:', err));
+
+          return [senderId, ...prev];
+        });
+
+        // 4. Update messagesMap to trigger unread badge update & preview message update
         setMessagesMap((prev) => {
           const currentList = prev[senderId] || [];
           if (currentList.some((m) => m._id === msg._id)) return prev;
+
+          // If the buyer is already cached but not the active conversation, trigger a toast alert
+          if (activeId === null || activeId !== Number(senderId)) {
+            const profile = buyerProfiles[senderId];
+            if (profile) {
+              setToast({
+                show: true,
+                title: `New Message from ${profile.name}`,
+                message: msg.message
+              });
+              setTimeout(() => setToast(null), 4000);
+            }
+          }
+
           return { ...prev, [senderId]: [...currentList, msg] };
         });
       }
@@ -342,7 +412,40 @@ export default function Chats() {
   );
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 font-sans">
+    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 font-sans relative">
+      
+      {/* Self-contained CSS Toast Keyframes */}
+      <style>{`
+        @keyframes slideInRight {
+          from {
+            transform: translateX(120%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in-right {
+          animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
+
+      {/* Floating Dynamic Slide-in Toast Notification */}
+      {toast && toast.show && (
+        <div className="fixed top-6 right-6 z-50 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 max-w-sm flex items-center gap-3 animate-slide-in-right transition-all">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-[#1e53e6] flex items-center justify-center shrink-0 border border-blue-100">
+            <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="font-bold text-[10px] text-[#1e53e6] uppercase tracking-wider">New Message</h4>
+            <h4 className="font-semibold text-sm text-gray-900 truncate mt-0.5">{toast.title}</h4>
+            <p className="text-xs text-gray-500 truncate mt-0.5">{toast.message}</p>
+          </div>
+        </div>
+      )}
       
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
@@ -461,9 +564,9 @@ export default function Chats() {
           {/* 1. Chats Contacts Column (Left Pane) */}
           <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col shrink-0">
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 shrink-0">
-              <h2 className="text-lg font-semibold text-[#1e53e6]">Chats</h2>
-              <p className="text-xs text-gray-400 mt-1">Talk with your buyers</p>
+            <div className="p-6 border-b border-gray-100 shrink-0">
+              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Chats</h2>
+              <p className="text-sm text-gray-500 mt-1 font-normal">Talk with your buyers</p>
             </div>
 
             {/* Contacts list container */}
