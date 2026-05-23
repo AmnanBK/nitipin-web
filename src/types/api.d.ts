@@ -95,6 +95,7 @@ export interface TravelerReview {
   traveler_id: number;
   buyer_id: number;
   buyer_name: string;
+  buyer_photo?: string | null;
   rating: number;
   comment: string;
   created_at: string;

@@ -401,8 +401,12 @@ export default function Reviews() {
 
                       {/* Shaded bottom information box */}
                       <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 flex items-center gap-3 shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-blue-50 text-[#1e53e6] border border-blue-200 flex items-center justify-center shrink-0">
-                          <Icons.User />
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-blue-50 text-[#1e53e6] flex items-center justify-center">
+                          {review.buyer_photo ? (
+                            <img src={review.buyer_photo} alt="Avatar" className="w-full h-full object-cover" />
+                          ) : (
+                            <Icons.User />
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <h5 className="font-semibold text-sm text-[#1e53e6] leading-none truncate">
