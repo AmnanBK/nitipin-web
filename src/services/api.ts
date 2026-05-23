@@ -35,8 +35,8 @@ const processQueue = (error: any, token: string | null = null) => {
 // Menyisipkan token akses di setiap request HTTP ke endpoint terproteksi
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Rute permintaan secara dinamis ke masing-masing layanan mikro untuk melewati gateway yang bermasalah
-    if (config.url) {
+    // Rute permintaan secara dinamis ke masing-masing layanan mikro hanya saat mode development lokal
+    if (import.meta.env.DEV && config.url) {
       if (config.url.startsWith('/api/auth') || config.url.startsWith('/auth')) {
         config.baseURL = 'http://localhost:8081';
       } else if (
@@ -120,8 +120,12 @@ api.interceptors.response.use(
 
       try {
         // Lakukan pemanggilan API refresh token secara terpisah (jangan pakai instance api utama)
+        const refreshBaseUrl = import.meta.env.DEV
+          ? 'http://localhost:8081'
+          : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080');
+
         const response = await axios.post(
-          'http://localhost:8081/api/auth/refresh',
+          `${refreshBaseUrl}/api/auth/refresh`,
           { refreshToken }
         );
 
