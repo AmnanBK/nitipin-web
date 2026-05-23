@@ -332,8 +332,8 @@ export default function SalesHistory() {
           >
             <Icons.Menu />
           </button>
-          <span className="font-black text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-bold text-xs">
+          <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs animate-fade-in">
             {profile?.name?.[0].toUpperCase() || user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -343,8 +343,8 @@ export default function SalesHistory() {
           
           {/* Header Title section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">Sale History</h2>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
+            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Sale History</h2>
+            <p className="text-sm text-gray-600 mt-1 font-normal animate-fade-in">
               Welcome back, {profile?.name || user?.name || 'Sarah'}!
             </p>
             <hr className="border-gray-200 mt-6" />
@@ -359,7 +359,7 @@ export default function SalesHistory() {
                 </svg>
                 <div className="text-sm font-semibold">{error}</div>
               </div>
-              <button onClick={fetchSalesData} className="px-3 py-1 bg-rose-200 hover:bg-rose-300 text-rose-900 rounded-lg text-xs font-bold transition-all">Reload</button>
+              <button onClick={fetchSalesData} className="px-3 py-1 bg-rose-200 hover:bg-rose-300 text-rose-900 rounded-lg text-xs font-semibold transition-all">Reload</button>
             </div>
           )}
 
@@ -376,8 +376,8 @@ export default function SalesHistory() {
             {/* CARD 1: Order Completed */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Order Completed</span>
-                <span className="text-3xl lg:text-4xl font-extrabold text-gray-900 block leading-tight">
+                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Order Completed</span>
+                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
                   {completedCount}
                 </span>
               </div>
@@ -389,8 +389,8 @@ export default function SalesHistory() {
             {/* CARD 2: Total Revenue */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Total Revenue</span>
-                <span className="text-3xl lg:text-4xl font-extrabold text-gray-900 block leading-tight">
+                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Total Revenue</span>
+                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
                   {formatMockupIDR(totalRevenue)}
                 </span>
               </div>
@@ -402,8 +402,8 @@ export default function SalesHistory() {
             {/* CARD 3: Wallet Balance */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Balance</span>
-                <span className="text-3xl lg:text-4xl font-extrabold text-gray-900 block leading-tight">
+                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Balance</span>
+                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
                   {formatMockupIDR(walletBalance)}
                 </span>
               </div>
@@ -426,7 +426,7 @@ export default function SalesHistory() {
               placeholder="Search by ID, Buyer name, or Product..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-2.5 pl-10 pr-4 text-xs font-semibold text-gray-800 placeholder-gray-400/80 shadow-sm transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 bg-white font-normal shadow-sm"
             />
             {searchQuery && (
               <button
@@ -449,12 +449,12 @@ export default function SalesHistory() {
                 {/* Table Header with premium blue background */}
                 <thead>
                   <tr className="bg-[#5b87f9] text-white">
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">ID</th>
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">Transaction Date</th>
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">Buyer</th>
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">Product</th>
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">Status</th>
-                    <th className="py-4 px-6 font-bold text-sm tracking-wide">Amount</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">ID</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">Transaction Date</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">Buyer</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">Product</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">Status</th>
+                    <th className="py-4 px-6 font-semibold text-sm tracking-wide">Amount</th>
                   </tr>
                 </thead>
 
@@ -462,7 +462,7 @@ export default function SalesHistory() {
                 <tbody className="divide-y divide-gray-100">
                   {displayRows.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-sm font-semibold text-gray-400">
+                      <td colSpan={6} className="py-12 text-center text-sm font-normal text-gray-400">
                         {searchQuery ? 'No matching transactions found.' : 'No completed sales transactions found.'}
                       </td>
                     </tr>
@@ -476,20 +476,20 @@ export default function SalesHistory() {
                         </td>
 
                         {/* Transaction Date */}
-                        <td className="py-4.5 px-6 text-xs font-semibold text-gray-500">
+                        <td className="py-4.5 px-6 text-xs font-normal text-gray-500">
                           {formatTransactionDate(row.completedAt)}
                         </td>
 
                         {/* Buyer */}
-                        <td className="py-4.5 px-6 text-sm font-extrabold text-gray-900">
+                        <td className="py-4.5 px-6 text-sm font-semibold text-gray-900">
                           {row.buyer}
                         </td>
 
                         {/* Product with dynamic Qty badge */}
-                        <td className="py-4.5 px-6 text-sm font-bold text-gray-700">
+                        <td className="py-4.5 px-6 text-sm font-normal text-gray-600">
                           <div className="flex items-center gap-2">
                             <span>{row.product}</span>
-                            <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-extrabold text-blue-600 bg-blue-50/70 border border-blue-100 rounded">
+                            <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50/70 border border-blue-100 rounded">
                               x{row.quantity}
                             </span>
                           </div>
@@ -497,13 +497,13 @@ export default function SalesHistory() {
 
                         {/* Status Completed pill */}
                         <td className="py-4.5 px-6">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-emerald-600 bg-emerald-50/70 border border-emerald-100 uppercase tracking-wide">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-emerald-600 bg-emerald-50/70 border border-emerald-100 uppercase tracking-wide">
                             Completed
                           </span>
                         </td>
 
                         {/* Amount */}
-                        <td className="py-4.5 px-6 text-sm font-black text-gray-900">
+                        <td className="py-4.5 px-6 text-sm font-semibold text-gray-900">
                           {formatMockupIDR(row.amount)}
                         </td>
 

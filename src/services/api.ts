@@ -1,9 +1,12 @@
 import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const isLocalhost = BASE_URL.includes('localhost');
+
 // Buat instance Axios dengan base URL dari environment variable
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,8 +38,8 @@ const processQueue = (error: any, token: string | null = null) => {
 // Menyisipkan token akses di setiap request HTTP ke endpoint terproteksi
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Rute permintaan secara dinamis ke masing-masing layanan mikro untuk melewati gateway yang bermasalah
-    if (config.url) {
+    // Rute permintaan secara dinamis ke masing-masing layanan mikro hanya jika berjalan di localhost
+    if (isLocalhost && config.url) {
       if (config.url.startsWith('/api/auth') || config.url.startsWith('/auth')) {
         config.baseURL = 'http://localhost:8081';
       } else if (
@@ -119,9 +122,10 @@ api.interceptors.response.use(
       }
 
       try {
-        // Lakukan pemanggilan API refresh token secara terpisah (jangan pakai instance api utama)
+        // Lakukan pemanggilan API refresh token secara terpisah (gunakan endpoint dinamis)
+        const refreshBaseUrl = isLocalhost ? 'http://localhost:8081' : BASE_URL;
         const response = await axios.post(
-          'http://localhost:8081/api/auth/refresh',
+          `${refreshBaseUrl}/api/auth/refresh`,
           { refreshToken }
         );
 

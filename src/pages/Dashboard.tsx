@@ -177,7 +177,7 @@ export default function Dashboard() {
           
           {/* HEADER MAIN */}
           <div className="mb-6">
-            <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">Dashboard</h2>
+            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Dashboard</h2>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               Welcome back, {profile?.name || user?.name || 'Sarah'}!
             </p>
@@ -219,8 +219,8 @@ export default function Dashboard() {
                 {/* CARD 1: Total Product */}
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
-                    <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Total Product</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-1.5">{products.length}</h3>
+                    <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Total Product</p>
+                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">{products.length}</h3>
                   </div>
                   <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600">
                     <Icons.Package />
@@ -230,8 +230,8 @@ export default function Dashboard() {
                 {/* CARD 2: Order Received */}
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
-                    <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Order Received</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-1.5">{orders.length}</h3>
+                    <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Order Received</p>
+                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">{orders.length}</h3>
                   </div>
                   <div className="bg-amber-50 p-2.5 rounded-xl text-amber-600">
                     <Icons.ShoppingCart />
@@ -241,8 +241,8 @@ export default function Dashboard() {
                 {/* CARD 3: Balance */}
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
-                    <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Balance</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-1.5">
+                    <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Balance</p>
+                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">
                       {formatMockupIDR(profile?.balance || 0)}
                     </h3>
                   </div>
@@ -254,8 +254,8 @@ export default function Dashboard() {
                 {/* CARD 4: Account Status */}
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
-                    <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Account Status</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-1.5 capitalize">
+                    <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Account Status</p>
+                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5 capitalize">
                       {profile?.account_status || 'Active'}
                     </h3>
                   </div>
@@ -282,24 +282,24 @@ export default function Dashboard() {
                 {/* Body Rows */}
                 <div className="divide-y divide-gray-100">
                   {orders.length === 0 ? (
-                    <div className="py-12 text-center text-gray-400 font-medium">
+                    <div className="py-12 text-center text-gray-600 font-normal text-sm">
                       No order data available currently.
                     </div>
                   ) : (
                     orders.map(order => (
                       <div 
                         key={order.id} 
-                        className="grid grid-cols-5 items-center py-4.5 px-6 text-sm text-gray-700 hover:bg-slate-50/60 transition-all font-medium"
+                        className="grid grid-cols-5 items-center py-4.5 px-6 text-sm text-gray-700 hover:bg-slate-50/60 transition-all font-normal"
                       >
-                        <span className="text-gray-900 font-bold">#{order.id}</span>
-                        <span className="text-gray-600 font-semibold">{order.buyer_name || 'Buyer'}</span>
+                        <span className="text-gray-900 font-semibold">#{order.id}</span>
+                        <span className="text-gray-600 font-normal">{order.buyer_name || 'Buyer'}</span>
                         <span className="text-gray-500 font-normal truncate pr-4">
                           {order.product_name || `Product ID #${order.product_id}`}
                         </span>
                         
                         {/* Perfect outline pill status */}
                         <div className="text-center">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
                             order.status === 'completed'
                               ? 'bg-green-50 text-green-600 border-green-200'
                               : order.status === 'pending_review'
@@ -310,7 +310,7 @@ export default function Dashboard() {
                           </span>
                         </div>
 
-                        <span className="text-right font-bold text-gray-900">
+                        <span className="text-right font-semibold text-gray-900">
                           {formatMockupIDR(order.total_price)}
                         </span>
                       </div>

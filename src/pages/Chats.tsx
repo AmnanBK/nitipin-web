@@ -339,7 +339,7 @@ export default function Chats() {
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="font-extrabold text-sm leading-none text-white truncate">
+            <h4 className="font-semibold text-sm leading-none text-white truncate">
               {user?.name || 'Sarah'}
             </h4>
             <p className="text-blue-200/80 text-[11px] mt-1 truncate">
@@ -390,7 +390,7 @@ export default function Chats() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="font-extrabold text-sm leading-none text-white truncate">
+                <h4 className="font-semibold text-sm leading-none text-white truncate">
                   {user?.name || 'Sarah'}
                 </h4>
                 <p className="text-blue-200/80 text-[11px] mt-1 truncate">
@@ -415,8 +415,8 @@ export default function Chats() {
           >
             <Icons.Menu />
           </button>
-          <span className="font-black text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-bold text-xs">
+          <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs">
             {user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -428,7 +428,7 @@ export default function Chats() {
           <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col shrink-0">
             {/* Header */}
             <div className="p-4 border-b border-gray-100 shrink-0">
-              <h2 className="text-xl font-bold text-[#1e53e6]">Chats</h2>
+              <h2 className="text-lg font-semibold text-[#1e53e6]">Chats</h2>
               <p className="text-xs text-gray-400 mt-1">Talk with your buyers</p>
             </div>
 
@@ -490,7 +490,7 @@ export default function Chats() {
                           : 'bg-white border-transparent hover:bg-slate-50/70 hover:border-gray-200'
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border flex items-center justify-center font-bold transition-all ${
+                      <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border flex items-center justify-center font-semibold transition-all ${
                         isActive 
                           ? 'border-[#1e53e6]/30 bg-blue-100 text-[#1e53e6] scale-105 shadow-sm' 
                           : 'border-slate-100 bg-slate-50 text-gray-600'
@@ -505,25 +505,25 @@ export default function Chats() {
                         <div className="flex items-center justify-between gap-2">
                           <h4 className={`text-sm truncate transition-colors ${
                             unreadCount > 0 
-                              ? 'font-black text-[#1e53e6]' 
+                              ? 'font-semibold text-[#1e53e6]' 
                               : isActive 
-                                ? 'font-extrabold text-gray-900' 
-                                : 'font-bold text-gray-700'
+                                ? 'font-semibold text-gray-900' 
+                                : 'font-normal text-gray-700'
                           }`}>
                             {profile?.name || `Buyer #${id}`}
                           </h4>
                           {unreadCount > 0 && (
-                            <span className="w-5 h-5 rounded-full bg-rose-500 text-white font-extrabold text-[10px] flex items-center justify-center shrink-0 animate-pulse">
+                            <span className="w-5 h-5 rounded-full bg-rose-500 text-white font-semibold text-[10px] flex items-center justify-center shrink-0 animate-pulse">
                               {unreadCount}
                             </span>
                           )}
                         </div>
                         <p className={`text-xs truncate mt-0.5 ${
                           unreadCount > 0 
-                            ? 'font-bold text-gray-600' 
+                            ? 'font-normal text-gray-800' 
                             : isActive 
-                              ? 'text-gray-500 font-medium' 
-                              : 'text-gray-400'
+                              ? 'text-gray-500 font-normal' 
+                              : 'text-gray-400 font-normal'
                         }`}>
                           {lastMsgText}
                         </p>
@@ -543,7 +543,7 @@ export default function Chats() {
                 <div className="w-16 h-16 rounded-full bg-blue-50 border border-blue-150 flex items-center justify-center text-[#1e53e6] shadow-sm mb-4">
                   <Icons.Chat />
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">No Chat Selected</h3>
+                <h3 className="text-lg font-semibold text-gray-800">No Chat Selected</h3>
                 <p className="text-xs text-gray-400 mt-1 max-w-xs">
                   Select a buyer contact on the left column to start exchanging messages in real-time.
                 </p>
@@ -554,7 +554,7 @@ export default function Chats() {
                 {/* Active contact bar */}
                 <div className="h-16 bg-white border-b border-gray-150 flex items-center px-6 justify-between shrink-0 shadow-sm">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center bg-blue-50 text-[#1e53e6] font-extrabold text-sm">
+                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center bg-blue-50 text-[#1e53e6] font-semibold text-sm">
                       {activeBuyer?.profile_photo ? (
                         <img src={activeBuyer.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
@@ -562,10 +562,10 @@ export default function Chats() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-sm text-gray-900 leading-none truncate">
+                      <h4 className="font-semibold text-sm text-gray-900 leading-none truncate">
                         {activeBuyer?.name || `Buyer #${selectedBuyerId}`}
                       </h4>
-                      <span className="text-[10px] text-gray-400 font-medium mt-1 inline-block leading-none">
+                      <span className="text-[10px] text-gray-400 font-normal mt-1 inline-block leading-none">
                         Buyer Account
                       </span>
                     </div>
@@ -602,7 +602,7 @@ export default function Chats() {
                           {/* Speech Bubble */}
                           <div className="space-y-1">
                             <div
-                              className={`px-4 py-3 rounded-2xl text-sm font-medium shadow-sm leading-relaxed transition-all duration-200 ${
+                              className={`px-4 py-3 rounded-2xl text-sm font-normal shadow-sm leading-relaxed transition-all duration-200 ${
                                 isOutgoing
                                   ? 'bg-[#1e53e6] text-white rounded-tr-none shadow-blue-600/10'
                                   : 'bg-white text-gray-800 border border-slate-150 rounded-tl-none'
@@ -611,7 +611,7 @@ export default function Chats() {
                               {msg.message}
                             </div>
                             <span 
-                              className={`text-[9px] font-bold text-gray-400 block px-1 ${
+                              className={`text-[9px] font-normal text-gray-400 block px-1 ${
                                 isOutgoing ? 'text-right' : ''
                               }`}
                             >
@@ -635,7 +635,7 @@ export default function Chats() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Type your message here..."
-                    className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-[#1e53e6] focus:bg-white transition"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-900 bg-white"
                   />
                   <button
                     type="submit"

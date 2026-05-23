@@ -192,7 +192,7 @@ export default function Reviews() {
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="font-extrabold text-sm leading-none text-white truncate">
+            <h4 className="font-semibold text-sm leading-none text-white truncate">
               {user?.name || 'Sarah'}
             </h4>
             <p className="text-blue-200/80 text-[11px] mt-1 truncate">
@@ -243,7 +243,7 @@ export default function Reviews() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="font-extrabold text-sm leading-none text-white truncate">
+                <h4 className="font-semibold text-sm leading-none text-white truncate">
                   {user?.name || 'Sarah'}
                 </h4>
                 <p className="text-blue-200/80 text-[11px] mt-1 truncate">
@@ -268,8 +268,8 @@ export default function Reviews() {
           >
             <Icons.Menu />
           </button>
-          <span className="font-black text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-bold text-xs">
+          <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs">
             {user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -279,8 +279,8 @@ export default function Reviews() {
           
           {/* Header Title Block */}
           <div>
-            <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">My Reviews</h2>
-            <p className="text-sm text-gray-400 mt-1 font-semibold">Feedback and ratings from your customers</p>
+            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">My Reviews</h2>
+            <p className="text-sm text-gray-600 mt-1 font-normal animate-fade-in">Feedback and ratings from your customers</p>
           </div>
 
           {/* Loader or Error State */}
@@ -314,26 +314,26 @@ export default function Reviews() {
                   
                   {/* Total Reviews Card */}
                   <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Reviews</span>
-                    <h3 className="text-4xl font-black text-gray-900 mt-2">{totalReviews}</h3>
+                    <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest">Total Reviews</span>
+                    <h3 className="text-4xl font-semibold text-gray-900 mt-2">{totalReviews}</h3>
                   </div>
 
                   {/* Average Rating Card */}
                   <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Average Score</span>
+                    <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest">Average Score</span>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <h3 className="text-4xl font-black text-gray-900">{averageRating.toFixed(1)}</h3>
+                      <h3 className="text-4xl font-semibold text-gray-900">{averageRating.toFixed(1)}</h3>
                       <span className="text-yellow-400 text-2xl">★</span>
                     </div>
                     <div className="flex items-center gap-0.5 mt-1.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <svg
-                          key={star}
-                          className={`w-3.5 h-3.5 ${
-                            star <= Math.round(averageRating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'
-                          }`}
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
+                           key={star}
+                           className={`w-3.5 h-3.5 ${
+                             star <= Math.round(averageRating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'
+                           }`}
+                           viewBox="0 0 20 20"
+                           fill="currentColor"
                         >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
@@ -343,21 +343,21 @@ export default function Reviews() {
 
                   {/* Clean Visual Breakdown Display (Simple, Not Advance) */}
                   <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center space-y-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Rating Breakdown</span>
+                    <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest block mb-1">Rating Breakdown</span>
                     
                     {[5, 4, 3].map((star) => {
                       const count = (breakdown as any)[star] || 0;
                       const percent = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
                       return (
                         <div key={star} className="flex items-center gap-2 text-xs font-semibold">
-                          <span className="w-12 text-gray-500 font-bold shrink-0">{star} Stars</span>
+                          <span className="w-12 text-gray-500 font-semibold shrink-0">{star} Stars</span>
                           <div className="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden">
                             <div 
                               className="bg-yellow-400 h-full rounded-full transition-all duration-300"
                               style={{ width: `${percent}%` }}
                             />
                           </div>
-                          <span className="w-6 text-right text-gray-400 font-bold shrink-0">{count}</span>
+                          <span className="w-6 text-right text-gray-400 font-semibold shrink-0">{count}</span>
                         </div>
                       );
                     })}
@@ -372,7 +372,7 @@ export default function Reviews() {
                   {filteredReviews.map((review) => (
                     <div 
                       key={review._id} 
-                      className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-between gap-4 hover:scale-[1.01] transition-all duration-100"
+                      className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-between gap-4 hover:scale-[1.01] transition-all duration-105 hover:shadow-md"
                     >
                       <div className="space-y-3">
                         {/* Rating Stars (Row of Gold Stars) */}
@@ -394,7 +394,7 @@ export default function Reviews() {
                         </div>
 
                         {/* Comment Text */}
-                        <p className="text-sm font-semibold text-gray-800 leading-relaxed italic">
+                        <p className="text-sm font-normal text-gray-600 leading-relaxed italic">
                           "{review.comment}"
                         </p>
                       </div>
@@ -405,10 +405,10 @@ export default function Reviews() {
                           <Icons.User />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h5 className="font-extrabold text-sm text-[#1e53e6] leading-none truncate">
+                          <h5 className="font-semibold text-sm text-[#1e53e6] leading-none truncate">
                             {review.buyer_name || 'Anonymous Buyer'}
                           </h5>
-                          <span className="text-[10px] text-gray-400 block font-bold tracking-wide mt-1.5 truncate">
+                          <span className="text-[10px] text-gray-400 block font-normal tracking-wide mt-1.5 truncate">
                             Order - #{review.order_id}
                           </span>
                         </div>
@@ -425,8 +425,8 @@ export default function Reviews() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-black text-gray-900 leading-none">No Reviews Found</h4>
-                    <p className="text-xs text-gray-400 mt-2 font-bold uppercase tracking-wider">
+                    <h4 className="text-lg font-semibold text-gray-900 leading-none">No Reviews Found</h4>
+                    <p className="text-xs text-gray-655 mt-2 font-normal uppercase tracking-wider">
                       {ratingFilter === 'all' 
                         ? 'Complete sales orders to get rated by your buyers!' 
                         : 'No reviews found matching the selected star filter.'}
@@ -436,7 +436,7 @@ export default function Reviews() {
                   {ratingFilter === 'all' && (
                     <Link
                       to="/orders"
-                      className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md transition inline-block cursor-pointer"
+                      className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-md transition inline-block cursor-pointer"
                     >
                       View Active Orders
                     </Link>

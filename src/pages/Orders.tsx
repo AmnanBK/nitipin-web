@@ -216,6 +216,7 @@ export default function Orders() {
   const [proofPhotoUrl, setProofPhotoUrl] = useState<string>('');
   const [proofDescription, setProofDescription] = useState<string>('');
   const [uploadingProof, setUploadingProof] = useState<boolean>(false);
+  const [selectedProofFile, setSelectedProofFile] = useState<File | null>(null);
 
   // Global toast system
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -464,6 +465,7 @@ export default function Orders() {
     e.stopPropagation();
     setProofOrderId(orderId);
     setProofPhotoUrl('');
+    setSelectedProofFile(null);
     setProofDescription('');
     setShowProofModal(true);
   };
@@ -471,8 +473,8 @@ export default function Orders() {
   // Action: Submit Purchase Proof & transition to 'purchased'
   const handleUploadProof = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!proofOrderId || !proofPhotoUrl.trim()) {
-      showToast('Please enter a valid receipt photo URL.', 'error');
+    if (!proofOrderId || (!selectedProofFile && !proofPhotoUrl.trim())) {
+      showToast('Please attach a valid receipt file.', 'error');
       return;
     }
 
@@ -500,11 +502,16 @@ export default function Orders() {
         return;
       }
 
-      // 1. Upload Bukti Foto (JSON API body containing photo_url)
-      await api.post(`/api/orders/${proofOrderId}/proofs`, {
-        photo_url: proofPhotoUrl,
-        proof_type: 'purchase',
-        description: proofDescription || 'Valid purchase receipt.'
+      // 1. Upload Bukti Foto (FormData)
+      const formData = new FormData();
+      if (selectedProofFile) {
+        formData.append('photo', selectedProofFile);
+      }
+      formData.append('proof_type', 'purchase');
+      formData.append('description', proofDescription || 'Valid purchase receipt.');
+
+      await api.post(`/api/orders/${proofOrderId}/proofs`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       // 2. Transition Status to Purchased
@@ -671,7 +678,7 @@ export default function Orders() {
           {/* HEADER MAIN */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">Orders</h2>
+              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Orders</h2>
               <p className="text-sm text-gray-400 mt-1 font-medium">Manage and process traveler orders</p>
             </div>
           </div>
@@ -688,7 +695,7 @@ export default function Orders() {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-2.5 pl-10 pr-4 text-xs font-semibold text-gray-800 placeholder-gray-400/80 shadow-sm transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 bg-white font-normal shadow-sm"
             />
             {searchQuery && (
               <button
@@ -716,7 +723,7 @@ export default function Orders() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
+                className={`pb-3 text-sm font-semibold transition-all relative flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
                   activeTab === tab.id
                     ? 'text-[#1e53e6]'
                     : 'text-gray-400 hover:text-gray-600'
@@ -724,7 +731,7 @@ export default function Orders() {
               >
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
-                  <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-[#1e53e6] text-white'
                       : tab.id === 'pending_review'
@@ -767,8 +774,8 @@ export default function Orders() {
               <div className="bg-blue-50 p-4 rounded-full text-blue-500 mb-4 shrink-0">
                 <Icons.ShoppingCart />
               </div>
-              <h4 className="text-lg font-bold text-gray-900">No Orders Found</h4>
-              <p className="text-sm text-gray-400 mt-2">
+              <h4 className="text-lg font-semibold text-gray-900">No Orders Found</h4>
+              <p className="text-sm text-gray-600 mt-2 font-normal">
                 {activeTab === 'pending_review'
                   ? 'There are currently no new orders requiring your approval.'
                   : 'All of your incoming orders will be listed on this page.'}
@@ -799,16 +806,16 @@ export default function Orders() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${getStatusBadgeStyle(order.status)}`}>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${getStatusBadgeStyle(order.status)}`}>
                             {getStatusLabelText(order.status)}
                           </span>
-                          <span className="text-xs font-semibold text-gray-400">Order #{order.id}</span>
+                          <span className="text-xs font-normal text-gray-400">Order #{order.id}</span>
                         </div>
-                        <h4 className="text-base font-bold text-gray-900 truncate mt-1">{prod.name}</h4>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1 font-medium">
-                          <span>Buyer: <strong className="text-gray-700">{getBuyerName(order.buyer_id)}</strong></span>
+                        <h4 className="text-base font-semibold text-gray-900 truncate mt-1">{prod.name}</h4>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1 font-normal">
+                          <span>Buyer: <strong className="text-gray-700 font-semibold">{getBuyerName(order.buyer_id)}</strong></span>
                           <span className="hidden sm:inline text-gray-300">•</span>
-                          <span>Qty: <strong className="text-gray-700">{order.quantity} pcs</strong></span>
+                          <span>Qty: <strong className="text-gray-700 font-semibold">{order.quantity} pcs</strong></span>
                         </div>
                       </div>
                     </div>
@@ -817,8 +824,8 @@ export default function Orders() {
                     <div className="flex flex-row md:flex-col justify-between items-center md:items-end w-full md:w-auto shrink-0 border-t md:border-t-0 border-gray-100 pt-4 md:pt-0 gap-4">
                       {/* Price breakdown */}
                       <div className="text-left md:text-right">
-                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider leading-none">Total Payment</p>
-                        <h3 className="text-xl font-extrabold text-gray-900 mt-1">{formatMockupIDR(order.total_price)}</h3>
+                        <p className="text-[11px] font-normal text-gray-400 uppercase tracking-wider leading-none">Total Payment</p>
+                        <h3 className="text-xl font-semibold text-gray-900 mt-1">{formatMockupIDR(order.total_price)}</h3>
                       </div>
 
                       {/* Action buttons strictly mapped per status */}
@@ -827,13 +834,13 @@ export default function Orders() {
                           <>
                             <button
                               onClick={(e) => handleRejectOrder(order.id, e)}
-                              className="px-4 py-2 border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold rounded-xl transition duration-150 cursor-pointer"
+                              className="px-4 py-2 border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold rounded-xl transition duration-150 cursor-pointer"
                             >
                               Reject
                             </button>
                             <button
                               onClick={(e) => handleApproveOrder(order.id, e)}
-                              className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm shadow-blue-100 cursor-pointer"
+                              className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm shadow-blue-100 cursor-pointer"
                             >
                               Approve
                             </button>
@@ -842,7 +849,7 @@ export default function Orders() {
                         {order.status === 'approved' && (
                           <button
                             onClick={(e) => handleOpenProofModal(order.id, e)}
-                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm cursor-pointer"
+                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
                           >
                             Mark as Purchased
                           </button>
@@ -850,7 +857,7 @@ export default function Orders() {
                         {order.status === 'purchased' && (
                           <button
                             onClick={(e) => handleShipOrder(order.id, e)}
-                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm cursor-pointer"
+                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
                           >
                             Ship Product
                           </button>
@@ -891,12 +898,12 @@ export default function Orders() {
             <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-slate-50">
               <div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getStatusBadgeStyle(selectedOrder.status)}`}>
+                  <span className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getStatusBadgeStyle(selectedOrder.status)}`}>
                     {getStatusLabelText(selectedOrder.status)}
                   </span>
-                  <span className="text-xs font-semibold text-gray-400">Order ID #{selectedOrder.id}</span>
+                  <span className="text-xs font-normal text-gray-400">Order ID #{selectedOrder.id}</span>
                 </div>
-                <h3 className="text-xl font-black text-gray-900 mt-1">Order Details Summary</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">Order Details Summary</h3>
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
@@ -934,7 +941,7 @@ export default function Orders() {
                     return (
                       <div key={step.key} className="flex flex-col items-center text-center p-2 rounded-xl bg-white border border-gray-100 shadow-sm relative">
                         {/* Bubble Icon */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-xs shadow-sm transition-all ${
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs shadow-sm transition-all ${
                           isCanceled
                             ? 'bg-rose-100 text-rose-600 border border-rose-200'
                             : isCompleted
@@ -946,12 +953,12 @@ export default function Orders() {
                           {isCompleted ? '✓' : step.num}
                         </div>
                         {/* Label text */}
-                        <span className={`text-[11px] font-bold mt-2 ${
+                        <span className={`text-[11px] font-semibold mt-2 ${
                           isCanceled ? 'text-rose-500' : isActive ? 'text-[#1e53e6]' : isCompleted ? 'text-gray-900' : 'text-gray-400'
                         }`}>
                           {step.label}
                         </span>
-                        <span className="text-[9px] text-gray-400 mt-0.5 font-medium uppercase tracking-wider">
+                        <span className="text-[9px] text-gray-400 mt-0.5 font-normal uppercase tracking-wider">
                           {isActive ? 'Active' : isCompleted ? 'Completed' : 'Queue'}
                         </span>
                       </div>
@@ -967,7 +974,7 @@ export default function Orders() {
                 <div className="space-y-6">
                   {/* Product Details Box */}
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Requested Product Details</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Requested Product Details</h4>
                     <div className="flex gap-4 items-start">
                       <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 border border-gray-100 bg-slate-50 flex items-center justify-center shadow-sm">
                         <img
@@ -977,11 +984,11 @@ export default function Orders() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-base font-bold text-gray-900 leading-tight">{getProductDetails(selectedOrder.product_id).name}</h4>
-                        <p className="text-xs text-gray-400 mt-1 leading-relaxed line-clamp-2">{getProductDetails(selectedOrder.product_id).description}</p>
+                        <h4 className="text-base font-semibold text-gray-900 leading-tight">{getProductDetails(selectedOrder.product_id).name}</h4>
+                        <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2 font-normal">{getProductDetails(selectedOrder.product_id).description}</p>
                         <div className="bg-slate-50 rounded-xl p-2.5 mt-3 flex justify-between items-center border border-slate-100">
                           <span className="text-xs text-gray-500 font-semibold">Product Price:</span>
-                          <span className="text-sm font-extrabold text-[#1e53e6]">
+                          <span className="text-sm font-semibold text-[#1e53e6]">
                             {formatMockupIDR(getProductDetails(selectedOrder.product_id).price)} × {selectedOrder.quantity} pcs
                           </span>
                         </div>
@@ -991,17 +998,17 @@ export default function Orders() {
 
                   {/* Escrow Details */}
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Secure Escrow Payment (Rekber)</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Secure Escrow Payment (Rekber)</h4>
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                       <div>
-                        <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">Total Transaction Value</p>
-                        <h3 className="text-2xl font-black text-gray-900 mt-1">{formatMockupIDR(selectedOrder.total_price)}</h3>
+                        <p className="text-[10px] font-normal text-gray-600 uppercase tracking-wider">Total Transaction Value</p>
+                        <h3 className="text-2xl font-semibold text-gray-900 mt-1">{formatMockupIDR(selectedOrder.total_price)}</h3>
                       </div>
                       {loadingDetails ? (
                         <div className="h-8 w-24 bg-slate-200 rounded-xl animate-pulse" />
                       ) : escrowStatus ? (
                         <div className="text-right">
-                          <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border ${
+                          <span className={`text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border ${
                             escrowStatus.status === 'released'
                               ? 'bg-green-50 text-green-700 border-green-200 shadow-green-50/50'
                               : escrowStatus.status === 'refunded'
@@ -1010,7 +1017,7 @@ export default function Orders() {
                           }`}>
                             {escrowStatus.status === 'hold' ? 'On Hold' : escrowStatus.status}
                           </span>
-                          <p className="text-[9px] text-gray-400 font-semibold mt-1.5">ESCROW PROTECTION ACTIVE</p>
+                          <p className="text-[9px] text-gray-400 font-normal mt-1.5">ESCROW PROTECTION ACTIVE</p>
                         </div>
                       ) : null}
                     </div>
@@ -1018,11 +1025,11 @@ export default function Orders() {
 
                   {/* Bukti Foto Transaksi */}
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Purchase Receipt Photo</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Purchase Receipt Photo</h4>
                     {loadingDetails ? (
                       <div className="h-16 bg-slate-50 rounded-xl animate-pulse" />
                     ) : proofs.length === 0 ? (
-                      <div className="bg-slate-50 text-center rounded-2xl p-6 border border-slate-100 text-xs font-bold text-gray-400 flex flex-col items-center gap-2">
+                      <div className="bg-slate-50 text-center rounded-2xl p-6 border border-slate-100 text-xs font-normal text-gray-400 flex flex-col items-center gap-2">
                         <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -1039,17 +1046,17 @@ export default function Orders() {
                                 className="w-full h-full object-cover"
                               />
                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer" onClick={() => window.open(proof.photo_url, '_blank')}>
-                                <span className="bg-white/90 px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-800 shadow">Zoom Receipt</span>
+                                <span className="bg-white/90 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-gray-800 shadow">Zoom Receipt</span>
                               </div>
-                              <span className="absolute top-2 left-2 text-[9px] font-extrabold px-2 py-0.5 rounded-md uppercase border tracking-wider bg-white text-blue-600 border-blue-100 shadow-sm">
+                              <span className="absolute top-2 left-2 text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase border tracking-wider bg-white text-blue-600 border-blue-100 shadow-sm">
                                 {proof.proof_type}
                               </span>
                             </div>
                             <div className="p-3">
-                              <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">
+                              <p className="text-[9px] text-gray-400 uppercase font-normal tracking-wider">
                                 By {proof.uploader_type}
                               </p>
-                              <p className="text-xs text-gray-700 font-bold mt-0.5 leading-tight">
+                              <p className="text-xs text-gray-700 font-normal mt-0.5 leading-tight">
                                 {proof.description || 'Valid purchase receipt.'}
                               </p>
                             </div>
@@ -1064,20 +1071,20 @@ export default function Orders() {
                 <div className="space-y-6">
                   {/* Buyer & Shipping Card */}
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg shrink-0">
+                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
                         {getBuyerName(selectedOrder.buyer_id).charAt(0)}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h5 className="text-base font-extrabold text-gray-900 leading-none">{getBuyerName(selectedOrder.buyer_id)}</h5>
-                        <p className="text-[10px] text-gray-400 mt-1 font-bold">ACTIVE BUYER</p>
+                        <h5 className="text-base font-semibold text-gray-900 leading-none">{getBuyerName(selectedOrder.buyer_id)}</h5>
+                        <p className="text-[10px] text-gray-400 mt-1 font-normal">ACTIVE BUYER</p>
                         
                         <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3 items-start">
                           <Icons.Location />
                           <div className="min-w-0">
-                            <p className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Shipping Address</p>
-                            <p className="text-xs text-gray-600 mt-1.5 font-bold leading-relaxed">
+                            <p className="text-[11px] font-normal text-gray-600 uppercase tracking-wider">Shipping Address</p>
+                            <p className="text-xs text-gray-600 mt-1.5 font-normal leading-relaxed">
                               {getShippingAddress(selectedOrder.shipping_address_id)}
                             </p>
                           </div>
@@ -1088,7 +1095,7 @@ export default function Orders() {
 
                   {/* Traveler Checklist Card */}
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Order Processing Steps Checklist</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Order Processing Steps Checklist</h4>
                     
                     <div className="space-y-3.5">
                       {[
@@ -1100,12 +1107,12 @@ export default function Orders() {
                         <div key={i} className="flex items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
                             task.done 
-                              ? 'bg-emerald-500 border-emerald-500 text-white text-[10px] font-extrabold' 
+                              ? 'bg-emerald-500 border-emerald-500 text-white text-[10px] font-semibold' 
                               : 'border-gray-200 bg-slate-50'
                           }`}>
                             {task.done && '✓'}
                           </div>
-                          <span className={`text-xs font-bold ${task.done ? 'text-gray-900 line-through decoration-gray-300' : 'text-gray-500'}`}>
+                          <span className={`text-xs font-normal ${task.done ? 'text-gray-900 line-through decoration-gray-300' : 'text-gray-500'}`}>
                             {task.label}
                           </span>
                         </div>
@@ -1115,10 +1122,10 @@ export default function Orders() {
 
                   {/* Pro-Tip Box */}
                   <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex gap-3">
-                    <span className="text-blue-500 text-xl font-bold shrink-0">💡</span>
+                    <span className="text-blue-500 text-xl font-semibold shrink-0">💡</span>
                     <div>
-                      <h5 className="text-xs font-bold text-blue-900">Tips for Travelers</h5>
-                      <p className="text-[11px] text-blue-800/80 leading-relaxed font-semibold mt-1">
+                      <h5 className="text-xs font-semibold text-blue-900">Tips for Travelers</h5>
+                      <p className="text-[11px] text-blue-800/80 leading-relaxed font-normal mt-1">
                         Ensure you photograph the shopping receipt in clear lighting conditions. A valid receipt speeds up the Escrow verification process by Nitipin.
                       </p>
                     </div>
@@ -1133,7 +1140,7 @@ export default function Orders() {
             <div className="px-8 py-5 border-t border-gray-100 shrink-0 bg-slate-50 flex items-center justify-end gap-3">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-6 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-extrabold rounded-xl transition duration-150 cursor-pointer shadow-sm"
+                className="px-6 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl transition duration-150 cursor-pointer shadow-sm"
               >
                 Close Details
               </button>
@@ -1141,13 +1148,13 @@ export default function Orders() {
                 <>
                   <button
                     onClick={(e) => { handleRejectOrder(selectedOrder.id, e); }}
-                    className="px-6 py-3 border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm font-extrabold rounded-xl transition duration-150 cursor-pointer shadow-sm"
+                    className="px-6 py-3 border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm font-semibold rounded-xl transition duration-150 cursor-pointer shadow-sm"
                   >
                     Reject Order
                   </button>
                   <button
                     onClick={(e) => { handleApproveOrder(selectedOrder.id, e); }}
-                    className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-extrabold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                    className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                   >
                     Approve Order
                   </button>
@@ -1156,7 +1163,7 @@ export default function Orders() {
               {selectedOrder.status === 'approved' && (
                 <button
                   onClick={(e) => { handleOpenProofModal(selectedOrder.id, e); }}
-                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-extrabold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                 >
                   Mark as Purchased & Upload Receipt
                 </button>
@@ -1164,7 +1171,7 @@ export default function Orders() {
               {selectedOrder.status === 'purchased' && (
                 <button
                   onClick={(e) => { handleShipOrder(selectedOrder.id, e); }}
-                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-extrabold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                 >
                   Ship Product
                 </button>
@@ -1182,7 +1189,7 @@ export default function Orders() {
           <div className="bg-[#f8f9fa] rounded-2xl w-full max-w-sm shadow-xl p-6 flex flex-col overflow-hidden max-h-[90vh]">
             
             {/* Title */}
-            <h3 className="text-xl font-bold text-gray-900 tracking-tight mb-4 shrink-0">
+            <h3 className="text-lg font-semibold text-gray-900 tracking-tight mb-4 shrink-0">
               Upload Proof of Purchase
             </h3>
 
@@ -1190,35 +1197,69 @@ export default function Orders() {
               
               {/* Form Content */}
               <div className="space-y-4 overflow-y-auto flex-1 pr-1">
-                <p className="text-xs text-gray-400 font-medium">
+                <p className="text-xs text-gray-400 font-normal">
                   Please upload a photo of the purchase receipt for this item to update the status.
                 </p>
 
-                {/* Receipt Image URL Input */}
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-semibold text-gray-700">Receipt Image URL</label>
-                  <input
-                    type="url"
-                    required
-                    placeholder="https://example.com/receipt.jpg"
-                    value={proofPhotoUrl}
-                    onChange={(e) => setProofPhotoUrl(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2.5 px-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full transition duration-150 text-gray-900 font-medium"
-                  />
-                  <p className="text-[10px] text-gray-400">
-                    Provide a direct web link to the purchase receipt photo.
-                  </p>
-                </div>
+                 {/* Receipt Image File Input */}
+                 <div className="space-y-1.5">
+                   <label className="block text-sm font-semibold text-gray-700">Attach Receipt Image File</label>
+                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                     <input
+                       type="file"
+                       accept="image/*"
+                       required={!proofPhotoUrl}
+                       onChange={(e) => {
+                         const file = e.target.files?.[0];
+                         if (file) {
+                           setSelectedProofFile(file);
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             setProofPhotoUrl(reader.result as string);
+                           };
+                           reader.readAsDataURL(file);
+                         }
+                       }}
+                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                     />
+                     <div className="flex flex-col items-center justify-center gap-1">
+                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6] mb-1">
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                         </svg>
+                       </div>
+                       <span className="text-xs font-bold text-gray-700">
+                         {selectedProofFile ? selectedProofFile.name : 'Choose a receipt file'}
+                       </span>
+                       <span className="text-[10px] text-gray-400 font-medium">
+                         Supports JPG, PNG, WEBP
+                       </span>
+                     </div>
+                   </div>
+
+                   {proofPhotoUrl && (
+                     <div className="mt-2 relative h-16 w-28 border border-gray-100 rounded-lg overflow-hidden bg-white shrink-0 shadow-sm">
+                       <img 
+                         src={proofPhotoUrl} 
+                         alt="Receipt Preview"
+                         className="h-full w-full object-cover"
+                         onError={(e) => {
+                           e.currentTarget.style.display = 'none';
+                         }}
+                       />
+                     </div>
+                   )}
+                 </div>
 
                 {/* Description */}
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Additional Notes</label>
+                  <label className="block text-sm font-normal text-gray-600 mb-1">Additional Notes</label>
                   <textarea
                     rows={2}
                     placeholder="e.g. Purchased at Kyoto Station supermarket..."
                     value={proofDescription}
                     onChange={(e) => setProofDescription(e.target.value)}
-                    className="bg-white border border-gray-200 rounded-xl py-2 px-3.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full h-16 resize-none transition duration-150 text-gray-900 font-medium"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-900 font-normal bg-white h-16 resize-none"
                   />
                 </div>
               </div>
@@ -1228,14 +1269,14 @@ export default function Orders() {
                 <button
                   type="button"
                   onClick={() => setShowProofModal(false)}
-                  className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-500 font-bold text-xs rounded-xl py-2 px-5 transition duration-150 cursor-pointer"
+                  className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-500 font-semibold text-xs rounded-xl py-2 px-5 transition duration-150 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={uploadingProof}
-                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-xs rounded-xl py-2 px-5 transition duration-150 shadow-sm disabled:opacity-75 flex items-center justify-center gap-2 cursor-pointer"
+                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-xs rounded-xl py-2 px-5 transition duration-150 shadow-sm disabled:opacity-75 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {uploadingProof ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -1262,14 +1303,14 @@ export default function Orders() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-black text-gray-900">Approve Order</h3>
-            <p className="text-xs text-gray-500 font-semibold leading-relaxed mt-2">
+            <h3 className="text-lg font-semibold text-gray-900">Approve Order</h3>
+            <p className="text-xs text-gray-600 font-normal leading-relaxed mt-2">
               Are you sure you want to approve this order? Once approved, the buyer will lock their escrow payment.
             </p>
             <div className="flex items-center gap-3 w-full mt-6">
               <button
                 onClick={() => setConfirmApproveId(null)}
-                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-extrabold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
+                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
               >
                 Cancel
               </button>
@@ -1278,7 +1319,7 @@ export default function Orders() {
                   executeApproveOrder(confirmApproveId);
                   setConfirmApproveId(null);
                 }}
-                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-extrabold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
               >
                 Approve
               </button>
@@ -1296,14 +1337,14 @@ export default function Orders() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
             </div>
-            <h3 className="text-lg font-black text-gray-900">Reject Order</h3>
-            <p className="text-xs text-gray-500 font-semibold leading-relaxed mt-2">
+            <h3 className="text-lg font-semibold text-gray-900">Reject Order</h3>
+            <p className="text-xs text-gray-600 font-normal leading-relaxed mt-2">
               Are you sure you want to reject this order? The buyer will receive a full refund of their funds immediately.
             </p>
             <div className="flex items-center gap-3 w-full mt-6">
               <button
                 onClick={() => setConfirmRejectId(null)}
-                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-extrabold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
+                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
               >
                 Cancel
               </button>
@@ -1312,7 +1353,7 @@ export default function Orders() {
                   executeRejectOrder(confirmRejectId);
                   setConfirmRejectId(null);
                 }}
-                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-rose-100 cursor-pointer"
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-rose-100 cursor-pointer"
               >
                 Reject
               </button>
@@ -1330,14 +1371,14 @@ export default function Orders() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177V3.75A1.5 1.5 0 0012.75 2.25h-1.5a1.5 1.5 0 00-1.5 1.5v4.877m4.5 0A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25m7.5 0h-7.5" />
               </svg>
             </div>
-            <h3 className="text-lg font-black text-gray-900">Mark as Shipped</h3>
-            <p className="text-xs text-gray-500 font-semibold leading-relaxed mt-2">
+            <h3 className="text-lg font-semibold text-gray-900">Mark as Shipped</h3>
+            <p className="text-xs text-gray-600 font-normal leading-relaxed mt-2">
               Are you sure you want to mark this product as shipped? Please ensure tracking details are shared with the buyer.
             </p>
             <div className="flex items-center gap-3 w-full mt-6">
               <button
                 onClick={() => setConfirmShipId(null)}
-                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-extrabold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
+                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
               >
                 Cancel
               </button>
@@ -1346,7 +1387,7 @@ export default function Orders() {
                   executeShipOrder(confirmShipId);
                   setConfirmShipId(null);
                 }}
-                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-extrabold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
               >
                 Ship
               </button>
@@ -1361,7 +1402,7 @@ export default function Orders() {
       {toast && (
         <div className={`fixed bottom-4 right-4 z-50 px-6 py-3 rounded-xl shadow-lg border ${toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'} animate-fade-in flex items-center gap-3 transition-all`}>
           <div className={`w-2 h-2 rounded-full ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-          <span className="font-bold text-sm">{toast.message}</span>
+          <span className="font-semibold text-sm">{toast.message}</span>
         </div>
       )}
 

@@ -81,6 +81,7 @@ export default function Profile() {
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [tempPhotoUrl, setTempPhotoUrl] = useState<string>('');
   const [savingPhotoUrl, setSavingPhotoUrl] = useState<boolean>(false);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
 
   // Mobile sidebar view state
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
@@ -155,18 +156,30 @@ export default function Profile() {
   // Handle Avatar Click - Open Modal
   const handleAvatarClick = () => {
     setTempPhotoUrl(profilePhotoUrl || '');
+    setSelectedPhotoFile(null);
     setShowPhotoModal(true);
   };
 
-  // Save/Apply Profile Photo Link via PUT API
+  // Save/Apply Profile Photo via PUT API
   const handleApplyPhotoUrl = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) return;
     try {
       setSavingPhotoUrl(true);
-      const res = await api.put(`/api/travelers/${user.id}`, {
-        profile_photo: tempPhotoUrl.trim() || null
-      });
+      
+      let res;
+      if (selectedPhotoFile) {
+        const formData = new FormData();
+        formData.append('photo', selectedPhotoFile);
+        res = await api.put(`/api/travelers/${user.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        res = await api.put(`/api/travelers/${user.id}`, {
+          profile_photo: tempPhotoUrl.trim() || null
+        });
+      }
+
       if (res.data.status === 'success') {
         const updatedProf: TravelerProfile = res.data.data;
         setProfile(updatedProf);
@@ -175,7 +188,7 @@ export default function Profile() {
         setShowPhotoModal(false);
       }
     } catch (err: any) {
-      console.error('Update photo URL error:', err);
+      console.error('Update photo error:', err);
       showToast(err.response?.data?.message || 'Failed to update profile photo.', 'error');
     } finally {
       setSavingPhotoUrl(false);
@@ -357,7 +370,7 @@ export default function Profile() {
           
           {/* Header Title Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-extrabold text-[#1e53e6] tracking-tight">Profile</h2>
+            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Profile</h2>
             <p className="text-sm text-gray-400 mt-1 font-semibold">Manage your profile</p>
             <hr className="border-gray-200 mt-6" />
           </div>
@@ -416,7 +429,7 @@ export default function Profile() {
  
                   {/* Name and green toggle status */}
                   <div className="space-y-2.5">
-                    <h3 className="text-2xl font-black text-gray-900 leading-none">
+                    <h3 className="text-lg font-semibold text-gray-900 leading-none">
                       {profile?.name || user?.name || 'Sarah'}
                     </h3>
                     
@@ -461,7 +474,7 @@ export default function Profile() {
               {/* CARD 2: PERSONAL INFORMATION FORM PANEL */}
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
                 
-                <h3 className="text-lg font-black text-gray-900 mb-6 tracking-wide">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6 tracking-wide">
                   Personal Information
                 </h3>
 
@@ -472,47 +485,47 @@ export default function Profile() {
                     
                     {/* Name field */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Name</label>
+                      <label className="block text-sm font-normal text-gray-600">Name</label>
                       <input
                         type="text"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g., Sarah"
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
                       />
                     </div>
 
                     {/* Email field (Disabled read-only) */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">E-mail</label>
+                      <label className="block text-sm font-normal text-gray-600">E-mail</label>
                       <input
                         type="email"
                         disabled
                         value={profile?.email || user?.email || 'sarah@email.com'}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-400 cursor-not-allowed"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-400 cursor-not-allowed"
                       />
                     </div>
 
                     {/* Phone field */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Phone</label>
+                      <label className="block text-sm font-normal text-gray-600">Phone</label>
                       <input
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="e.g., +6281234567890"
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800"
                       />
                     </div>
 
                     {/* Country dropdown picker */}
                     <div className="space-y-2">
-                      <label className="block text-sm font-bold text-gray-700">Country</label>
+                      <label className="block text-sm font-normal text-gray-600">Country</label>
                       <select
                         value={countryId}
                         onChange={(e) => setCountryId(e.target.value)}
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all cursor-pointer"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-gray-800 cursor-pointer"
                       >
                         <option value="" disabled className="text-gray-400">Select target country</option>
                         {countries.map((c) => (
@@ -525,13 +538,13 @@ export default function Profile() {
 
                     {/* Bio field */}
                     <div className="space-y-2 md:col-span-2">
-                      <label className="block text-sm font-bold text-gray-700">Biography (Bio)</label>
+                      <label className="block text-sm font-normal text-gray-600">Biography (Bio)</label>
                       <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="Describe your travel frequency, targeted countries, and shopping services..."
                         rows={3}
-                        className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400 resize-none"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 resize-none"
                       />
                     </div>
 
@@ -596,9 +609,9 @@ export default function Profile() {
           <div className="relative bg-white rounded-3xl w-full max-w-md p-6 md:p-8 shadow-2xl border border-gray-150 transform transition-all duration-300 scale-100 flex flex-col gap-6 animate-scale-in">
             {/* Header */}
             <div>
-              <h3 className="text-xl font-black text-gray-900 leading-none">Update Profile Photo Link</h3>
+              <h3 className="text-lg font-semibold text-gray-900 leading-none">Update Profile Photo</h3>
               <p className="text-xs text-gray-400 mt-2 font-semibold leading-relaxed">
-                Provide a direct URL to your new profile image. It will update instantly across your dashboard.
+                Choose a picture from your computer to upload as your profile photo.
               </p>
             </div>
 
@@ -630,18 +643,35 @@ export default function Profile() {
             {/* Input Form */}
             <form onSubmit={handleApplyPhotoUrl} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">Profile Photo URL</label>
-                <input
-                  type="url"
-                  required
-                  value={tempPhotoUrl}
-                  onChange={(e) => setTempPhotoUrl(e.target.value)}
-                  placeholder="e.g., https://example.com/photo.jpg"
-                  className="w-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3 px-4 text-sm font-semibold text-gray-800 transition-all placeholder-gray-400"
-                />
-                <span className="text-[10px] text-gray-400 block font-semibold leading-relaxed">
-                  Tip: Paste direct link ending in JPG, PNG, WEBP, or any hosted cloud storage URL.
-                </span>
+                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Attach Photo File</label>
+                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    required={!tempPhotoUrl}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSelectedPhotoFile(file);
+                        setTempPhotoUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6]">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-bold text-gray-700">
+                      {selectedPhotoFile ? selectedPhotoFile.name : 'Choose a file or drag it here'}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      Supports JPG, PNG, WEBP up to 5MB
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -655,10 +685,10 @@ export default function Profile() {
                 </button>
                 <button
                   type="submit"
-                  disabled={savingPhotoUrl}
+                  disabled={savingPhotoUrl || (!selectedPhotoFile && !tempPhotoUrl)}
                   className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
                 >
-                  {savingPhotoUrl ? 'Applying...' : 'Apply URL'}
+                  {savingPhotoUrl ? 'Uploading...' : 'Upload File'}
                 </button>
               </div>
             </form>
