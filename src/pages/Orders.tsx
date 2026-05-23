@@ -30,105 +30,7 @@ const getShippingAddress = (addressId: number | string): string => {
   return addresses[Number(addressId)] || `Alamat Pengiriman #${addressId} (Kota Jakarta)`;
 };
 
-// Sleek fallback mock orders matching the entire transaction lifecycle
-const DUMMY_ORDERS: Order[] = [
-  {
-    id: 101,
-    buyer_id: 1,
-    traveler_id: 1,
-    product_id: 1,
-    quantity: 2,
-    total_price: 240000,
-    shipping_address_id: 1,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: 102,
-    buyer_id: 2,
-    traveler_id: 1,
-    product_id: 2,
-    quantity: 1,
-    total_price: 850000,
-    shipping_address_id: 2,
-    status: 'approved',
-    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 20).toISOString(),
-  },
-  {
-    id: 103,
-    buyer_id: 3,
-    traveler_id: 1,
-    product_id: 3,
-    quantity: 3,
-    total_price: 360000,
-    shipping_address_id: 3,
-    status: 'purchased',
-    created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 40).toISOString(),
-  },
-  {
-    id: 104,
-    buyer_id: 4,
-    traveler_id: 1,
-    product_id: 4,
-    quantity: 1,
-    total_price: 1200000,
-    shipping_address_id: 4,
-    status: 'shipped',
-    created_at: new Date(Date.now() - 3600000 * 72).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 60).toISOString(),
-  },
-  {
-    id: 105,
-    buyer_id: 1,
-    traveler_id: 1,
-    product_id: 2,
-    quantity: 1,
-    total_price: 850000,
-    shipping_address_id: 1,
-    status: 'completed',
-    created_at: new Date(Date.now() - 3600000 * 120).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 100).toISOString(),
-  },
-  {
-    id: 106,
-    buyer_id: 2,
-    traveler_id: 1,
-    product_id: 3,
-    quantity: 2,
-    total_price: 240000,
-    shipping_address_id: 2,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 3).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 3).toISOString(),
-  },
-  {
-    id: 107,
-    buyer_id: 3,
-    traveler_id: 1,
-    product_id: 4,
-    quantity: 1,
-    total_price: 1200000,
-    shipping_address_id: 3,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-  },
-  {
-    id: 108,
-    buyer_id: 4,
-    traveler_id: 1,
-    product_id: 1,
-    quantity: 5,
-    total_price: 600000,
-    shipping_address_id: 4,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 8).toISOString(),
-  },
-];
+
 
 // ==========================================
 // CUSTOM SLEEK SVG ICONS (INLINE COMPONENTS)
@@ -245,15 +147,10 @@ export default function Orders() {
       setCatalogueProducts(allProductsRes.data.data || []);
       
       const fetchedOrders = ordersRes.data.data || [];
-      if (fetchedOrders.length === 0) {
-        setOrders(DUMMY_ORDERS);
-      } else {
-        setOrders(fetchedOrders);
-      }
+      setOrders(fetchedOrders);
     } catch (err: any) {
       console.error('Fetch Orders Data Error:', err);
-      // Populate mock data if backend sync failed (great for testing)
-      setOrders(DUMMY_ORDERS);
+      setError(err.response?.data?.message || 'Failed to sync data with the backend microservices.');
     } finally {
       setLoading(false);
     }
@@ -550,7 +447,7 @@ export default function Orders() {
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
       const prodName = getProductDetails(order.product_id).name.toLowerCase();
-      const buyerName = getBuyerName(order.buyer_id).toLowerCase();
+      const buyerName = (order.buyer_name || getBuyerName(order.buyer_id)).toLowerCase();
       const orderIdStr = order.id.toString();
       matchesSearch = prodName.includes(q) || buyerName.includes(q) || orderIdStr.includes(q);
     }
@@ -813,7 +710,7 @@ export default function Orders() {
                         </div>
                         <h4 className="text-base font-semibold text-gray-900 truncate mt-1">{prod.name}</h4>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1 font-normal">
-                          <span>Buyer: <strong className="text-gray-700 font-semibold">{getBuyerName(order.buyer_id)}</strong></span>
+                          <span>Buyer: <strong className="text-gray-700 font-semibold">{order.buyer_name || getBuyerName(order.buyer_id)}</strong></span>
                           <span className="hidden sm:inline text-gray-300">•</span>
                           <span>Qty: <strong className="text-gray-700 font-semibold">{order.quantity} pcs</strong></span>
                         </div>
@@ -1074,10 +971,10 @@ export default function Orders() {
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
-                        {getBuyerName(selectedOrder.buyer_id).charAt(0)}
+                        {(selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)).charAt(0)}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h5 className="text-base font-semibold text-gray-900 leading-none">{getBuyerName(selectedOrder.buyer_id)}</h5>
+                        <h5 className="text-base font-semibold text-gray-900 leading-none">{selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)}</h5>
                         <p className="text-[10px] text-gray-400 mt-1 font-normal">ACTIVE BUYER</p>
                         
                         <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3 items-start">
