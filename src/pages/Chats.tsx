@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { getSocket, disconnectSocket } from '../services/socket';
 import type { BuyerProfile } from '../types/api';
 
 // ==========================================
@@ -89,6 +90,7 @@ export default function Chats() {
   const [loadingContacts, setLoadingContacts] = useState<boolean>(true);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
+  const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -215,65 +217,97 @@ export default function Chats() {
     }
   }, [selectedBuyerId]);
 
-  // Live polling for new messages every 4 seconds
+  // WebSocket: Connect on mount, listen for incoming messages, disconnect on unmount
   useEffect(() => {
-    if (selectedBuyerId === null) return;
+    if (!user?.id) return;
 
-    const interval = setInterval(() => {
-      fetchMessages(selectedBuyerId, true);
-    }, 4000);
+    const socket = getSocket();
 
-    return () => clearInterval(interval);
-  }, [selectedBuyerId]);
+    const handleConnect = () => {
+      console.log('[Socket] Connected:', socket.id);
+      setSocketConnected(true);
+    };
+
+    const handleDisconnect = () => {
+      console.log('[Socket] Disconnected');
+      setSocketConnected(false);
+    };
+
+    const handleReceiveMessage = (msg: Message) => {
+      console.log('[Socket] receiveMessage:', msg);
+      // Append to active conversation if it's from the currently selected contact
+      setMessages((prev) => {
+        // Deduplicate by _id
+        if (prev.some((m) => m._id === msg._id)) return prev;
+        return [...prev, msg];
+      });
+      // Update the sidebar preview map too
+      const senderId = msg.sender_id.split('_')[1];
+      if (senderId) {
+        setMessagesMap((prev) => {
+          const currentList = prev[senderId] || [];
+          if (currentList.some((m) => m._id === msg._id)) return prev;
+          return { ...prev, [senderId]: [...currentList, msg] };
+        });
+      }
+    };
+
+    const handleMessageSent = (msg: Message) => {
+      // Swap the optimistic temp message with the confirmed server message
+      setMessages((prev) =>
+        prev.map((m) => (m._id.startsWith('temp_') && m.message === msg.message ? msg : m))
+      );
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('receiveMessage', handleReceiveMessage);
+    socket.on('messageSent', handleMessageSent);
+
+    // If already connected when effect runs
+    if (socket.connected) setSocketConnected(true);
+
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('receiveMessage', handleReceiveMessage);
+      socket.off('messageSent', handleMessageSent);
+      disconnectSocket();
+    };
+  }, [user]);
 
   // Auto-scroll messages list to the bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Send message submission handler
-  const handleSendMessage = async (e: React.FormEvent) => {
+  // Send message via socket.io (real-time)
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBuyerId || !inputText.trim()) return;
 
     const messageText = inputText.trim();
     setInputText('');
 
-    try {
-      // Local optimistic append to ensure high-fidelity instantaneous response
-      const optimisticMsg: Message = {
-        _id: `temp_${Date.now()}`,
-        sender_id: `traveler_${user?.id || 0}`,
-        receiver_id: `buyer_${selectedBuyerId}`,
-        message: messageText,
-        is_read: false,
-        createdAt: new Date().toISOString()
-      };
-      setMessages((prev) => [...prev, optimisticMsg]);
+    // Optimistic append
+    const optimisticMsg: Message = {
+      _id: `temp_${Date.now()}`,
+      sender_id: `traveler_${user?.id || 0}`,
+      receiver_id: `buyer_${selectedBuyerId}`,
+      message: messageText,
+      is_read: false,
+      createdAt: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
 
-      // Execute API call
-      const res = await api.post('/api/chats', {
-        receiver_id: selectedBuyerId,
-        message: messageText
-      });
+    // Also update sidebar preview immediately
+    setMessagesMap((prev) => {
+      const currentList = prev[selectedBuyerId.toString()] || [];
+      return { ...prev, [selectedBuyerId.toString()]: [...currentList, optimisticMsg] };
+    });
 
-      if (res.data.data) {
-        // Swap temp message with real API message
-        setMessages((prev) => 
-          prev.map((m) => m._id === optimisticMsg._id ? res.data.data : m)
-        );
-        // Also update message history map so that the sidebar's preview stays instantly updated!
-        setMessagesMap((prev) => {
-          const currentList = prev[selectedBuyerId.toString()] || [];
-          return {
-            ...prev,
-            [selectedBuyerId.toString()]: [...currentList, res.data.data]
-          };
-        });
-      }
-    } catch (err) {
-      console.error('Failed to send message:', err);
-    }
+    const socket = getSocket();
+    socket.emit('sendMessage', { receiverId: selectedBuyerId, message: messageText });
   };
 
   const activeBuyer = selectedBuyerId !== null ? buyerProfiles[selectedBuyerId.toString()] : null;
@@ -569,6 +603,15 @@ export default function Chats() {
                         Buyer Account
                       </span>
                     </div>
+                  </div>
+                  {/* Socket connection status indicator */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span
+                      className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}
+                    />
+                    <span className="text-[10px] text-gray-400 font-normal">
+                      {socketConnected ? 'Live' : 'Reconnecting...'}
+                    </span>
                   </div>
                 </div>
 
