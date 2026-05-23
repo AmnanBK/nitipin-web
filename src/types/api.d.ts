@@ -202,4 +202,10 @@ export interface Order {
   product_name?: string;
   buyer_name?: string;
   photo_url?: string | null;
+  buyer_email?: string;
+  buyer_phone?: string;
+  shipping_address?: string;
+  shipping_city?: string;
+  shipping_postal_code?: string;
+  shipping_label?: string;
 }

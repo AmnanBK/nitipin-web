@@ -256,8 +256,8 @@ export default function SalesHistory() {
   const displayRows = completedOrders
     .map(o => ({
       id: o.id,
-      buyer: getBuyerName(o.buyer_id),
-      product: getProductDetails(o.product_id).name,
+      buyer: o.buyer_name || getBuyerName(o.buyer_id),
+      product: o.product_name || getProductDetails(o.product_id).name,
       quantity: o.quantity,
       amount: o.total_price,
       completedAt: o.updated_at || o.created_at

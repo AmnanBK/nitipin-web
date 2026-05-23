@@ -479,8 +479,8 @@ export default function Orders() {
     let matchesSearch = true;
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
-      const prodName = getProductDetails(order.product_id).name.toLowerCase();
-      const buyerName = getBuyerName(order.buyer_id).toLowerCase();
+      const prodName = (order.product_name || getProductDetails(order.product_id).name).toLowerCase();
+      const buyerName = (order.buyer_name || getBuyerName(order.buyer_id)).toLowerCase();
       const orderIdStr = order.id.toString();
       matchesSearch = prodName.includes(q) || buyerName.includes(q) || orderIdStr.includes(q);
     }
@@ -715,7 +715,8 @@ export default function Orders() {
             /* ORDERS GRID/LIST */
             <div className="space-y-6">
               {filteredOrders.map((order) => {
-                const prod = getProductDetails(order.product_id);
+                const prodName = order.product_name || getProductDetails(order.product_id).name;
+                const prodPhotoUrl = order.photo_url || getProductDetails(order.product_id).photoUrl;
                 return (
                   <div
                     key={order.id}
@@ -726,8 +727,8 @@ export default function Orders() {
                     <div className="flex gap-4 min-w-0 flex-1">
                       <div className="w-16 h-16 rounded-xl border border-gray-100 overflow-hidden shrink-0 bg-gray-50 flex items-center justify-center">
                         <img
-                          src={prod.photoUrl}
-                          alt={prod.name}
+                          src={prodPhotoUrl}
+                          alt={prodName}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.src = 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=200&fit=crop&q=80';
@@ -741,9 +742,9 @@ export default function Orders() {
                           </span>
                           <span className="text-xs font-normal text-gray-400">Order #{order.id}</span>
                         </div>
-                        <h4 className="text-base font-semibold text-gray-900 truncate mt-1">{prod.name}</h4>
+                        <h4 className="text-base font-semibold text-gray-900 truncate mt-1">{prodName}</h4>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1 font-normal">
-                          <span>Buyer: <strong className="text-gray-700 font-semibold">{getBuyerName(order.buyer_id)}</strong></span>
+                          <span>Buyer: <strong className="text-gray-700 font-semibold">{order.buyer_name || getBuyerName(order.buyer_id)}</strong></span>
                           <span className="hidden sm:inline text-gray-300">•</span>
                           <span>Qty: <strong className="text-gray-700 font-semibold">{order.quantity} pcs</strong></span>
                         </div>
@@ -908,18 +909,18 @@ export default function Orders() {
                     <div className="flex gap-4 items-start">
                       <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 border border-gray-100 bg-slate-50 flex items-center justify-center shadow-sm">
                         <img
-                          src={getProductDetails(selectedOrder.product_id).photoUrl}
-                          alt={getProductDetails(selectedOrder.product_id).name}
+                          src={selectedOrder.photo_url || getProductDetails(selectedOrder.product_id).photoUrl}
+                          alt={selectedOrder.product_name || getProductDetails(selectedOrder.product_id).name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-base font-semibold text-gray-900 leading-tight">{getProductDetails(selectedOrder.product_id).name}</h4>
+                        <h4 className="text-base font-semibold text-gray-900 leading-tight">{selectedOrder.product_name || getProductDetails(selectedOrder.product_id).name}</h4>
                         <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2 font-normal">{getProductDetails(selectedOrder.product_id).description}</p>
                         <div className="bg-slate-50 rounded-xl p-2.5 mt-3 flex justify-between items-center border border-slate-100">
                           <span className="text-xs text-gray-500 font-semibold">Product Price:</span>
                           <span className="text-sm font-semibold text-[#1e53e6]">
-                            {formatMockupIDR(getProductDetails(selectedOrder.product_id).price)} × {selectedOrder.quantity} pcs
+                            {formatMockupIDR(Number(selectedOrder.total_price) / selectedOrder.quantity || getProductDetails(selectedOrder.product_id).price)} × {selectedOrder.quantity} pcs
                           </span>
                         </div>
                       </div>
@@ -1004,10 +1005,13 @@ export default function Orders() {
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
-                        {getBuyerName(selectedOrder.buyer_id).charAt(0)}
+                        {(selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)).charAt(0)}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h5 className="text-base font-semibold text-gray-900 leading-none">{getBuyerName(selectedOrder.buyer_id)}</h5>
+                        <h5 className="text-base font-semibold text-gray-900 leading-none">{selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)}</h5>
+                        {selectedOrder.buyer_email && (
+                          <p className="text-xs text-gray-500 mt-1 font-normal">{selectedOrder.buyer_email} {selectedOrder.buyer_phone ? `• ${selectedOrder.buyer_phone}` : ''}</p>
+                        )}
                         <p className="text-[10px] text-gray-400 mt-1 font-normal">ACTIVE BUYER</p>
                         
                         <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3 items-start">
@@ -1015,7 +1019,9 @@ export default function Orders() {
                           <div className="min-w-0">
                             <p className="text-[11px] font-normal text-gray-600 uppercase tracking-wider">Shipping Address</p>
                             <p className="text-xs text-gray-600 mt-1.5 font-normal leading-relaxed">
-                              {getShippingAddress(selectedOrder.shipping_address_id)}
+                              {selectedOrder.shipping_address 
+                                ? `${selectedOrder.shipping_address}, ${selectedOrder.shipping_city || ''} (${selectedOrder.shipping_postal_code || ''})` 
+                                : getShippingAddress(selectedOrder.shipping_address_id)}
                             </p>
                           </div>
                         </div>
