@@ -17,7 +17,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Email dan Password wajib diisi.');
+      setError('Email and Password are required.');
       return;
     }
 
@@ -30,7 +30,7 @@ export default function Login() {
 
       // Pengecekan role: Hanya traveler yang bisa masuk ke platform web
       if (authData.user.role !== 'traveler') {
-        setError('Akses Ditolak: Platform web ini hanya dikhususkan untuk Travelers.');
+        setError('Access Denied: This web platform is exclusive to Travelers.');
         return;
       }
 
@@ -43,7 +43,7 @@ export default function Login() {
       console.error('Login Error:', err);
       setError(
         err.response?.data?.message || 
-        'Login gagal. Silakan periksa kembali email dan password Anda.'
+        'Login failed. Please check your email and password again.'
       );
     } finally {
       setIsSubmitting(false);

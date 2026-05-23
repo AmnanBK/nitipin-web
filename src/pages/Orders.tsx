@@ -27,7 +27,7 @@ const getShippingAddress = (addressId: number | string): string => {
     3: 'Perumahan Harmoni Indah Blok B4/12, Kota Bekasi (17148)',
     4: 'Jl. Mawar No. 50, RT 02 / RW 03, Sukajadi, Pekanbaru (28124)',
   };
-  return addresses[Number(addressId)] || `Alamat Pengiriman #${addressId} (Kota Jakarta)`;
+  return addresses[Number(addressId)] || `Shipping Address #${addressId} (Jakarta City)`;
 };
 
 
@@ -269,7 +269,7 @@ export default function Orders() {
               proof_type: 'purchase',
               photo_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&fit=crop&q=80',
               uploader_type: 'traveler',
-              description: 'Bukti struk belanja resmi Yodobashi Camera Kyoto.'
+              description: 'Official shopping receipt from Yodobashi Camera Kyoto.'
             }
           ]);
         }

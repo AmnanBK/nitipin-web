@@ -171,7 +171,7 @@ export default function Catalogue() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName || !formPrice) {
-      setModalError('Nama produk dan harga wajib diisi');
+      setModalError('Product name and price are required');
       return;
     }
 
@@ -381,15 +381,15 @@ export default function Catalogue() {
               <div className="w-20 h-20 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6">
                 <Icons.Package />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Katalog Anda Masih Kosong</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Your Catalogue is Empty</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                Mulai pasang barang belanjaan luar negeri Anda agar pembeli dapat melakukan jastip dengan mudah!
+                Start listing overseas products so buyers can place orders easily!
               </p>
               <button
                 onClick={handleOpenCreate}
                 className="bg-[#1e53e6] hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all"
               >
-                Tambah Produk Pertama
+                Add First Product
               </button>
             </div>
           ) : (
