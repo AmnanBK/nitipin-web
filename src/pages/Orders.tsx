@@ -447,7 +447,7 @@ export default function Orders() {
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
       const prodName = getProductDetails(order.product_id).name.toLowerCase();
-      const buyerName = (order.buyer_name || getBuyerName(order.buyer_id)).toLowerCase();
+      const buyerName = getBuyerName(order.buyer_id).toLowerCase();
       const orderIdStr = order.id.toString();
       matchesSearch = prodName.includes(q) || buyerName.includes(q) || orderIdStr.includes(q);
     }
@@ -710,7 +710,7 @@ export default function Orders() {
                         </div>
                         <h4 className="text-base font-semibold text-gray-900 truncate mt-1">{prod.name}</h4>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1 font-normal">
-                          <span>Buyer: <strong className="text-gray-700 font-semibold">{order.buyer_name || getBuyerName(order.buyer_id)}</strong></span>
+                          <span>Buyer: <strong className="text-gray-700 font-semibold">{getBuyerName(order.buyer_id)}</strong></span>
                           <span className="hidden sm:inline text-gray-300">•</span>
                           <span>Qty: <strong className="text-gray-700 font-semibold">{order.quantity} pcs</strong></span>
                         </div>
@@ -971,10 +971,10 @@ export default function Orders() {
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
-                        {(selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)).charAt(0)}
+                        {getBuyerName(selectedOrder.buyer_id).charAt(0)}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h5 className="text-base font-semibold text-gray-900 leading-none">{selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)}</h5>
+                        <h5 className="text-base font-semibold text-gray-900 leading-none">{getBuyerName(selectedOrder.buyer_id)}</h5>
                         <p className="text-[10px] text-gray-400 mt-1 font-normal">ACTIVE BUYER</p>
                         
                         <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3 items-start">
