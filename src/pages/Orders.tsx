@@ -30,105 +30,7 @@ const getShippingAddress = (addressId: number | string): string => {
   return addresses[Number(addressId)] || `Alamat Pengiriman #${addressId} (Kota Jakarta)`;
 };
 
-// Sleek fallback mock orders matching the entire transaction lifecycle
-const DUMMY_ORDERS: Order[] = [
-  {
-    id: 101,
-    buyer_id: 1,
-    traveler_id: 1,
-    product_id: 1,
-    quantity: 2,
-    total_price: 240000,
-    shipping_address_id: 1,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: 102,
-    buyer_id: 2,
-    traveler_id: 1,
-    product_id: 2,
-    quantity: 1,
-    total_price: 850000,
-    shipping_address_id: 2,
-    status: 'approved',
-    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 20).toISOString(),
-  },
-  {
-    id: 103,
-    buyer_id: 3,
-    traveler_id: 1,
-    product_id: 3,
-    quantity: 3,
-    total_price: 360000,
-    shipping_address_id: 3,
-    status: 'purchased',
-    created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 40).toISOString(),
-  },
-  {
-    id: 104,
-    buyer_id: 4,
-    traveler_id: 1,
-    product_id: 4,
-    quantity: 1,
-    total_price: 1200000,
-    shipping_address_id: 4,
-    status: 'shipped',
-    created_at: new Date(Date.now() - 3600000 * 72).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 60).toISOString(),
-  },
-  {
-    id: 105,
-    buyer_id: 1,
-    traveler_id: 1,
-    product_id: 2,
-    quantity: 1,
-    total_price: 850000,
-    shipping_address_id: 1,
-    status: 'completed',
-    created_at: new Date(Date.now() - 3600000 * 120).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 100).toISOString(),
-  },
-  {
-    id: 106,
-    buyer_id: 2,
-    traveler_id: 1,
-    product_id: 3,
-    quantity: 2,
-    total_price: 240000,
-    shipping_address_id: 2,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 3).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 3).toISOString(),
-  },
-  {
-    id: 107,
-    buyer_id: 3,
-    traveler_id: 1,
-    product_id: 4,
-    quantity: 1,
-    total_price: 1200000,
-    shipping_address_id: 3,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-  },
-  {
-    id: 108,
-    buyer_id: 4,
-    traveler_id: 1,
-    product_id: 1,
-    quantity: 5,
-    total_price: 600000,
-    shipping_address_id: 4,
-    status: 'pending_review',
-    created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 8).toISOString(),
-  },
-];
+
 
 // ==========================================
 // CUSTOM SLEEK SVG ICONS (INLINE COMPONENTS)
@@ -273,15 +175,10 @@ export default function Orders() {
       setCatalogueProducts(allProductsRes.data.data || []);
       
       const fetchedOrders = ordersRes.data.data || [];
-      if (fetchedOrders.length === 0) {
-        setOrders(DUMMY_ORDERS);
-      } else {
-        setOrders(fetchedOrders);
-      }
+      setOrders(fetchedOrders);
     } catch (err: any) {
       console.error('Fetch Orders Data Error:', err);
-      // Populate mock data if backend sync failed (great for testing)
-      setOrders(DUMMY_ORDERS);
+      setError(err.response?.data?.message || 'Failed to sync data with the backend microservices.');
     } finally {
       setLoading(false);
     }
