@@ -261,7 +261,7 @@ export default function Reviews() {
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Mobile Header Bar */}
-        <header className="lg:hidden h-16 bg-white border-b border-gray-150 flex items-center justify-between px-6 shrink-0 shadow-sm">
+        <header className="lg:hidden h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0 shadow-sm">
           <button
             onClick={() => setShowMobileSidebar(true)}
             className="p-1 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-150 cursor-pointer"
@@ -313,13 +313,13 @@ export default function Reviews() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
                   
                   {/* Total Reviews Card */}
-                  <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest">Total Reviews</span>
                     <h3 className="text-4xl font-semibold text-gray-900 mt-2">{totalReviews}</h3>
                   </div>
 
                   {/* Average Rating Card */}
-                  <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest">Average Score</span>
                     <div className="flex items-baseline gap-2 mt-2">
                       <h3 className="text-4xl font-semibold text-gray-900">{averageRating.toFixed(1)}</h3>
@@ -342,7 +342,7 @@ export default function Reviews() {
                   </div>
 
                   {/* Clean Visual Breakdown Display (Simple, Not Advance) */}
-                  <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-center space-y-2">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col justify-center space-y-2">
                     <span className="text-[10px] font-normal text-gray-500 uppercase tracking-widest block mb-1">Rating Breakdown</span>
                     
                     {[5, 4, 3].map((star) => {
@@ -372,7 +372,7 @@ export default function Reviews() {
                   {filteredReviews.map((review) => (
                     <div 
                       key={review._id} 
-                      className="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm flex flex-col justify-between gap-4 hover:scale-[1.01] transition-all duration-105 hover:shadow-md"
+                      className="bg-white rounded-3xl p-6 shadow-sm flex flex-col justify-between gap-4 hover:scale-[1.01] transition-all duration-105 hover:shadow-md"
                     >
                       <div className="space-y-3">
                         {/* Rating Stars (Row of Gold Stars) */}
@@ -418,7 +418,7 @@ export default function Reviews() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white rounded-3xl p-12 border border-gray-150 shadow-sm flex flex-col items-center justify-center text-center max-w-xl mx-auto space-y-6 animate-fade-in">
+                <div className="bg-white rounded-3xl p-12 shadow-sm flex flex-col items-center justify-center text-center max-w-xl mx-auto space-y-6 animate-fade-in">
                   <div className="w-20 h-20 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 shadow-sm">
                     <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

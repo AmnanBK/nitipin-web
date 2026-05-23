@@ -19,7 +19,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password) {
-      setError('Nama, Email, dan Password wajib diisi.');
+      setError('Name, Email, and Password are required.');
       return;
     }
 
@@ -35,7 +35,7 @@ export default function Register() {
         phone: phone || undefined,
       });
 
-      setSuccess('Registrasi berhasil! Mengalihkan ke halaman login...');
+      setSuccess('Registration successful! Redirecting to login page...');
 
       // Redirect otomatis ke halaman login setelah 2 detik
       setTimeout(() => {
@@ -45,7 +45,7 @@ export default function Register() {
       console.error('Register Error:', err);
       setError(
         err.response?.data?.message || 
-        'Registrasi gagal. Silakan periksa kembali data Anda.'
+        'Registration failed. Please check your data again.'
       );
     } finally {
       setIsSubmitting(false);
