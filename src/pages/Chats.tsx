@@ -184,11 +184,19 @@ export default function Chats() {
       if (!silent) setLoadingMessages(true);
       const res = await api.get(`/api/chats/messages?with_user_id=${buyerId}`);
       if (res.data.data) {
-        setMessages(res.data.data);
+        // Since this contact is currently open, mark all buyer-sent messages as read locally
+        const readMessages = res.data.data.map((msg: Message) => {
+          if (msg.sender_id.startsWith('buyer_')) {
+            return { ...msg, is_read: true };
+          }
+          return msg;
+        });
+
+        setMessages(readMessages);
         // Also update message history map so that the sidebar's preview stays instantly updated!
         setMessagesMap((prev) => ({
           ...prev,
-          [buyerId.toString()]: res.data.data
+          [buyerId.toString()]: readMessages
         }));
       }
     } catch (err) {
@@ -249,11 +257,12 @@ export default function Chats() {
       const isFromActiveBuyer = msg.sender_id === `buyer_${activeId}`;
       const isToActiveBuyer = msg.receiver_id === `buyer_${activeId}`;
 
-      // 1. If currently in the active conversation, append message and auto-read
+      // 1. If currently in the active conversation, append message as read and auto-read
       if (activeId !== null && (isFromActiveBuyer || isToActiveBuyer)) {
+        const readMsg = { ...msg, is_read: true };
         setMessages((prev) => {
           if (prev.some((m) => m._id === msg._id)) return prev;
-          return [...prev, msg];
+          return [...prev, readMsg];
         });
         api.put(`/api/chats/read/${activeId}`).catch(() => {});
       } else {
@@ -317,7 +326,12 @@ export default function Chats() {
             }
           }
 
-          return { ...prev, [senderId]: [...currentList, msg] };
+          // If this is the active conversation, mark the message as read locally
+          const finalMsg = (activeId !== null && activeId === Number(senderId))
+            ? { ...msg, is_read: true }
+            : msg;
+
+          return { ...prev, [senderId]: [...currentList, finalMsg] };
         });
       }
     };
