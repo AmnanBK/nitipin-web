@@ -80,6 +80,22 @@ export default function SalesHistory() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Withdraw Modal State
+  const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
+  const [withdrawBankName, setWithdrawBankName] = useState<string>('');
+  const [withdrawAccountNumber, setWithdrawAccountNumber] = useState<string>('');
+  const [withdrawAccountHolder, setWithdrawAccountHolder] = useState<string>('');
+  const [withdrawing, setWithdrawing] = useState<boolean>(false);
+  const [withdrawError, setWithdrawError] = useState<string | null>(null);
+
+  // Toast State
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   // Mobile sidebar view state
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -105,6 +121,51 @@ export default function SalesHistory() {
       setError(err.response?.data?.message || 'Failed to sync data with the backend microservices.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Open Withdraw Modal
+  const handleOpenWithdrawModal = () => {
+    if (!profile?.balance || Number(profile.balance) <= 0) {
+      showToast('You do not have any balance to withdraw.', 'error');
+      return;
+    }
+    setWithdrawBankName('');
+    setWithdrawAccountNumber('');
+    setWithdrawAccountHolder(profile?.name || '');
+    setWithdrawError(null);
+    setShowWithdrawModal(true);
+  };
+
+  // Submit Withdraw API Request
+  const handleWithdrawSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.id) return;
+    if (!withdrawBankName.trim() || !withdrawAccountNumber.trim() || !withdrawAccountHolder.trim()) {
+      setWithdrawError('All bank details are required.');
+      return;
+    }
+
+    try {
+      setWithdrawing(true);
+      setWithdrawError(null);
+
+      const res = await api.post(`/api/travelers/${user.id}/withdraw`, {
+        bank_name: withdrawBankName.trim(),
+        account_number: withdrawAccountNumber.trim(),
+        account_holder: withdrawAccountHolder.trim()
+      });
+
+      if (res.data.status === 'success') {
+        showToast('Balance withdrawn successfully!');
+        setShowWithdrawModal(false);
+        fetchSalesData();
+      }
+    } catch (err: any) {
+      console.error('Withdraw submit error:', err);
+      setWithdrawError(err.response?.data?.message || 'Failed to complete balance withdrawal.');
+    } finally {
+      setWithdrawing(false);
     }
   };
 
@@ -374,42 +435,59 @@ export default function SalesHistory() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             
             {/* CARD 1: Order Completed */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
-              <div className="space-y-1">
-                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Order Completed</span>
-                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
-                  {completedCount}
-                </span>
-              </div>
-              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
-                <Icons.CompletedCart />
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[135px]">
+              <div className="flex items-center justify-between w-full">
+                <div className="space-y-1">
+                  <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Order Completed</span>
+                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                    {completedCount}
+                  </span>
+                </div>
+                <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
+                  <Icons.CompletedCart />
+                </div>
               </div>
             </div>
 
             {/* CARD 2: Total Revenue */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
-              <div className="space-y-1">
-                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Total Revenue</span>
-                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
-                  {formatMockupIDR(totalRevenue)}
-                </span>
-              </div>
-              <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
-                <Icons.TotalRevenue />
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[135px]">
+              <div className="flex items-center justify-between w-full">
+                <div className="space-y-1">
+                  <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Total Revenue</span>
+                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                    {formatMockupIDR(totalRevenue)}
+                  </span>
+                </div>
+                <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
+                  <Icons.TotalRevenue />
+                </div>
               </div>
             </div>
 
             {/* CARD 3: Wallet Balance */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
-              <div className="space-y-1">
-                <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Balance</span>
-                <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
-                  {formatMockupIDR(walletBalance)}
-                </span>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[135px]">
+              <div className="flex items-center justify-between w-full">
+                <div className="space-y-1">
+                  <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Balance</span>
+                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                    {formatMockupIDR(walletBalance)}
+                  </span>
+                </div>
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
+                  <Icons.Wallet />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-150 shrink-0">
-                <Icons.Wallet />
-              </div>
+              
+              <button 
+                onClick={handleOpenWithdrawModal}
+                disabled={!profile?.balance || Number(profile.balance) <= 0}
+                className="mt-3 pt-2 text-xs font-bold flex items-center gap-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 text-[#1e53e6] hover:text-blue-700 cursor-pointer"
+              >
+                <span>Withdraw Funds</span>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                </svg>
+              </button>
             </div>
 
           </div>
@@ -521,6 +599,114 @@ export default function SalesHistory() {
 
       </main>
 
+      {/* Withdraw Modal */}
+      {showWithdrawModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop blur overlay */}
+          <div 
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowWithdrawModal(false)}
+          />
+          
+          {/* Modal Container */}
+          <div className="relative bg-white rounded-3xl w-full max-w-md p-6 md:p-8 shadow-2xl border border-gray-150 transform transition-all duration-300 scale-100 flex flex-col gap-6">
+            {/* Header */}
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 leading-none">Withdraw Funds</h3>
+              <p className="text-xs text-gray-400 mt-2 font-medium leading-relaxed">
+                Withdraw your entire balance to your bank account. The funds will be processed immediately.
+              </p>
+            </div>
+
+            {/* Current Balance Summary Box */}
+            <div className="bg-green-50/50 border border-green-100 rounded-2xl p-4 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-green-700 font-extrabold uppercase tracking-wider block">Available Balance</span>
+                <span className="text-2xl font-bold text-green-900 mt-1 block">
+                  {formatMockupIDR(profile?.balance || 0)}
+                </span>
+              </div>
+              <div className="text-green-600">
+                <Icons.Wallet />
+              </div>
+            </div>
+
+            {withdrawError && (
+              <div className="bg-red-50 text-red-600 text-xs p-3.5 rounded-xl border border-red-100 font-medium">
+                {withdrawError}
+              </div>
+            )}
+
+            {/* Input Form */}
+            <form onSubmit={handleWithdrawSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Bank Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Bank Central Asia (BCA)"
+                  value={withdrawBankName}
+                  onChange={(e) => setWithdrawBankName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Account Number</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 8012345678"
+                  value={withdrawAccountNumber}
+                  onChange={(e) => setWithdrawAccountNumber(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 bg-white"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Account Holder Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. John Doe"
+                  value={withdrawAccountHolder}
+                  onChange={(e) => setWithdrawAccountHolder(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-400 text-gray-800 bg-white"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowWithdrawModal(false)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold rounded-xl transition duration-150 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={withdrawing}
+                  className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
+                >
+                  {withdrawing ? 'Processing...' : 'Confirm Withdraw'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-2.5 px-4.5 py-3 rounded-xl shadow-lg border transition-all duration-300 transform translate-y-0 ${
+          toast.type === 'success' 
+            ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+            : 'bg-rose-50 text-rose-800 border-rose-200'
+        }`}>
+          <span className="text-xs font-bold">{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }
