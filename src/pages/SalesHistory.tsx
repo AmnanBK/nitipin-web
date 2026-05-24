@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import type { TravelerProfile, Product, Order } from '../types/api';
+import logoImg from '../assets/logo.png';
 
 // ==========================================
 // CUSTOM SLEEK SVG ICONS (INLINE COMPONENT)
@@ -310,8 +311,11 @@ export default function SalesHistory() {
         <div>
           {/* Logo */}
           <div className="px-2 py-4">
-            <h1 className="text-2xl font-bold tracking-tight text-white leading-none">Nitipin</h1>
-            <p className="text-xs text-blue-200/80 mt-1 font-medium">Traveler Dashboard</p>
+            <div className="flex items-center gap-3">
+              <img src={logoImg} alt="Nitipin Logo" className="h-8 w-auto object-contain" />
+              <h1 className="text-2xl font-bold tracking-tight text-white leading-none">Nitipin</h1>
+            </div>
+            <p className="text-xs text-blue-200/80 mt-1.5 font-medium">Traveler Dashboard</p>
             <hr className="border-white/10 mt-4" />
           </div>
 
@@ -356,8 +360,11 @@ export default function SalesHistory() {
 
             <div>
               <div className="px-2 py-4">
-                <h1 className="text-2xl font-bold text-white leading-none">Nitipin</h1>
-                <p className="text-xs text-blue-200/80 mt-1 font-medium">Traveler Dashboard</p>
+                <div className="flex items-center gap-3">
+                  <img src={logoImg} alt="Nitipin Logo" className="h-8 w-auto object-contain" />
+                  <h1 className="text-2xl font-bold text-white leading-none">Nitipin</h1>
+                </div>
+                <p className="text-xs text-blue-200/80 mt-1.5 font-medium">Traveler Dashboard</p>
                 <hr className="border-white/10 mt-4" />
               </div>
               {renderSidebarLinks()}
@@ -393,7 +400,10 @@ export default function SalesHistory() {
           >
             <Icons.Menu />
           </button>
-          <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+          <div className="flex items-center gap-2">
+            <img src={logoImg} alt="Nitipin Logo" className="h-6 w-auto object-contain" />
+            <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+          </div>
           <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs animate-fade-in">
             {profile?.name?.[0].toUpperCase() || user?.name?.[0].toUpperCase() || 'S'}
           </div>

@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import type { TravelerProfile, Product, Order, OrderStatus } from '../types/api';
+import logoImg from '../assets/logo.png';
 
 // ==========================================
 // CLIENT-SIDE LOOKUPS (TO COMPLY WITH MICROSERVICE ISOLATION)
@@ -540,8 +541,11 @@ export default function Orders() {
         <div>
           {/* Logo & Subtitle */}
           <div className="px-2 py-4">
-            <h1 className="text-2xl font-bold tracking-tight text-white leading-none">Nitipin</h1>
-            <p className="text-xs text-blue-200/80 mt-1 font-medium">Traveler Dashboard</p>
+            <div className="flex items-center gap-3">
+              <img src={logoImg} alt="Nitipin Logo" className="h-8 w-auto object-contain" />
+              <h1 className="text-2xl font-bold tracking-tight text-white leading-none">Nitipin</h1>
+            </div>
+            <p className="text-xs text-blue-200/80 mt-1.5 font-medium">Traveler Dashboard</p>
             <hr className="border-white/10 mt-4" />
           </div>
           
