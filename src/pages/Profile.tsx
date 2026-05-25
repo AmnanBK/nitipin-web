@@ -86,6 +86,7 @@ export default function Profile() {
 
   // Mobile sidebar view state
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
+  const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
 
   // Toast system
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -262,7 +263,7 @@ export default function Profile() {
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo */}
           <div className="px-2 py-4">
@@ -283,7 +284,7 @@ export default function Profile() {
           to="/profile" 
           className="bg-white rounded-xl p-3.5 mx-1 flex items-center gap-3 shadow-md border border-white shrink-0 hover:scale-[1.01] transition-all cursor-pointer"
         >
-          <div className="w-9 h-9 rounded-full border border-blue-200 overflow-hidden flex items-center justify-center shrink-0 bg-blue-50 text-[#1e53e6]">
+          <div className="w-9 h-9 rounded-full border border-[#0c457d]/20 overflow-hidden flex items-center justify-center shrink-0 bg-[#0c457d]/10 text-[#0c457d]">
             {profile?.profile_photo ? (
               <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
@@ -291,7 +292,7 @@ export default function Profile() {
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="font-extrabold text-sm leading-none text-[#1e53e6] truncate">
+            <h4 className="font-extrabold text-sm leading-none text-[#0c457d] truncate">
               {profile?.name || user?.name || 'Sarah'}
             </h4>
             <p className="text-gray-400 text-[11px] mt-1 truncate">
@@ -308,7 +309,7 @@ export default function Profile() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowMobileSidebar(false)} />
           
-          <aside className="relative flex flex-col w-64 bg-[#1e53e6] text-white p-4 shadow-2xl animate-slide-right h-full justify-between">
+          <aside className="relative flex flex-col w-64 bg-[#0c457d] text-white p-4 shadow-2xl animate-slide-right h-full justify-between">
             <button
               onClick={() => setShowMobileSidebar(false)}
               className="absolute top-4 right-4 p-1 rounded-lg text-white/80 hover:text-white"
@@ -333,7 +334,7 @@ export default function Profile() {
               onClick={() => setShowMobileSidebar(false)}
               className="bg-white rounded-xl p-3.5 flex items-center gap-3 border border-white shadow-md cursor-pointer"
             >
-              <div className="w-9 h-9 rounded-full border border-blue-200 overflow-hidden flex items-center justify-center shrink-0 bg-blue-50 text-[#1e53e6]">
+              <div className="w-9 h-9 rounded-full border border-[#0c457d]/20 overflow-hidden flex items-center justify-center shrink-0 bg-[#0c457d]/10 text-[#0c457d]">
                 {profile?.profile_photo ? (
                   <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -341,7 +342,7 @@ export default function Profile() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="font-extrabold text-sm leading-none text-[#1e53e6] truncate">
+                <h4 className="font-extrabold text-sm leading-none text-[#0c457d] truncate">
                   {profile?.name || user?.name || 'Sarah'}
                 </h4>
                 <p className="text-gray-400 text-[11px] mt-1 truncate">
@@ -368,9 +369,9 @@ export default function Profile() {
           </button>
           <div className="flex items-center gap-2">
             <img src={logoImg} alt="Nitipin Logo" className="h-6 w-auto object-contain" />
-            <span className="font-black text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+            <span className="font-black text-[#0c457d] text-lg tracking-tight">Nitipin</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-bold text-xs">
+          <div className="w-8 h-8 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center font-bold text-xs">
             {profile?.name?.[0].toUpperCase() || user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -380,7 +381,7 @@ export default function Profile() {
           
           {/* Header Title Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Profile</h2>
+            <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">Profile</h2>
             <p className="text-sm text-gray-400 mt-1 font-semibold">Manage your profile</p>
             <hr className="border-gray-200 mt-6" />
           </div>
@@ -430,7 +431,7 @@ export default function Profile() {
                     {/* Floating blue circular pencil edit button */}
                     <button
                       onClick={handleAvatarClick}
-                      className="absolute bottom-0 right-0 w-8 h-8 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white transition-all cursor-pointer animate-fade-in"
+                      className="absolute bottom-0 right-0 w-8 h-8 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white transition-all cursor-pointer animate-fade-in"
                       title="Edit Photo URL"
                     >
                       <Icons.EditPencil />
@@ -473,7 +474,7 @@ export default function Profile() {
 
                 {/* Log Out Button */}
                 <button
-                  onClick={logout}
+                  onClick={() => setShowLogoutModal(true)}
                   className="px-6 py-2.5 text-sm font-extrabold text-red-500 bg-transparent border border-red-250 hover:bg-red-50 rounded-xl transition duration-150 cursor-pointer shrink-0 md:self-center"
                 >
                   Log Out
@@ -565,7 +566,7 @@ export default function Profile() {
                     <button
                       type="submit"
                       disabled={saving}
-                      className="px-8 py-3 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-sm font-bold rounded-xl shadow-md transition duration-150 cursor-pointer disabled:bg-blue-300 disabled:scale-100 shrink-0"
+                      className="px-8 py-3 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white text-sm font-bold rounded-xl shadow-md transition duration-150 cursor-pointer disabled:bg-blue-300 disabled:scale-100 shrink-0"
                     >
                       {saving ? 'Saving...' : 'Save'}
                     </button>
@@ -654,7 +655,7 @@ export default function Profile() {
             <form onSubmit={handleApplyPhotoUrl} className="space-y-6">
               <div className="space-y-2">
                 <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider">Attach Photo File</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-blue-500 hover:bg-[#0c457d]/10/20 transition-all relative cursor-pointer">
                   <input
                     type="file"
                     accept="image/*"
@@ -669,7 +670,7 @@ export default function Profile() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6]">
+                    <div className="w-10 h-10 rounded-full bg-[#0c457d]/10 flex items-center justify-center text-[#0c457d]">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                       </svg>
@@ -696,7 +697,7 @@ export default function Profile() {
                 <button
                   type="submit"
                   disabled={savingPhotoUrl || (!selectedPhotoFile && !tempPhotoUrl)}
-                  className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
                 >
                   {savingPhotoUrl ? 'Uploading...' : 'Upload File'}
                 </button>
@@ -705,7 +706,39 @@ export default function Profile() {
           </div>
         </div>
       )}
-
+ 
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 flex flex-col items-center text-center animate-zoom-in">
+            <div className="w-12 h-12 bg-rose-50 text-red-500 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-sm shadow-rose-50">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Confirm Log Out</h3>
+            <p className="text-xs text-gray-600 font-normal leading-relaxed mt-2">
+              Are you sure you want to log out of your traveler account?
+            </p>
+            <div className="flex items-center gap-3 w-full mt-6">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-xs py-3 rounded-xl transition duration-150 cursor-pointer shadow-sm animate-click"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={logout}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-red-100 cursor-pointer"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+ 
     </div>
   );
 }

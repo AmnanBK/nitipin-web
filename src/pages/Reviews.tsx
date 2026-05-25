@@ -150,7 +150,7 @@ export default function Reviews() {
         <Icons.History />
         <span>Sales History</span>
       </Link>
-      <Link to="/reviews" className="bg-white text-[#1e53e6] px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-semibold shadow-sm">
+      <Link to="/reviews" className="bg-white text-[#0c457d] px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-semibold shadow-sm">
         <Icons.Star />
         <span>My Reviews</span>
       </Link>
@@ -167,7 +167,7 @@ export default function Reviews() {
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo */}
           <div className="px-2 py-4">
@@ -213,7 +213,7 @@ export default function Reviews() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowMobileSidebar(false)} />
           
-          <aside className="relative flex flex-col w-64 bg-[#1e53e6] text-white p-4 shadow-2xl animate-slide-right h-full justify-between shrink-0">
+          <aside className="relative flex flex-col w-64 bg-[#0c457d] text-white p-4 shadow-2xl animate-slide-right h-full justify-between shrink-0">
             <button
               onClick={() => setShowMobileSidebar(false)}
               className="absolute top-4 right-4 p-1 rounded-lg text-white/80 hover:text-white"
@@ -277,9 +277,9 @@ export default function Reviews() {
           </button>
           <div className="flex items-center gap-2">
             <img src={logoImg} alt="Nitipin Logo" className="h-6 w-auto object-contain" />
-            <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+            <span className="font-semibold text-[#0c457d] text-lg tracking-tight">Nitipin</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs">
+          <div className="w-8 h-8 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center font-semibold text-xs">
             {user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -289,7 +289,7 @@ export default function Reviews() {
           
           {/* Header Title Block */}
           <div>
-            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">My Reviews</h2>
+            <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">My Reviews</h2>
             <p className="text-sm text-gray-600 mt-1 font-normal animate-fade-in">Feedback and ratings from your customers</p>
           </div>
 
@@ -411,7 +411,7 @@ export default function Reviews() {
 
                       {/* Shaded bottom information box */}
                       <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 flex items-center gap-3 shrink-0">
-                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-blue-50 text-[#1e53e6] flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center">
                           {review.buyer_photo ? (
                             <img src={review.buyer_photo} alt="Avatar" className="w-full h-full object-cover" />
                           ) : (
@@ -419,7 +419,7 @@ export default function Reviews() {
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h5 className="font-semibold text-sm text-[#1e53e6] leading-none truncate">
+                          <h5 className="font-semibold text-sm text-[#0c457d] leading-none truncate">
                             {review.buyer_name || 'Anonymous Buyer'}
                           </h5>
                           <span className="text-[10px] text-gray-400 block font-normal tracking-wide mt-1.5 truncate">
@@ -450,7 +450,7 @@ export default function Reviews() {
                   {ratingFilter === 'all' && (
                     <Link
                       to="/orders"
-                      className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-md transition inline-block cursor-pointer"
+                      className="px-6 py-2.5 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white text-xs font-semibold rounded-xl shadow-md transition inline-block cursor-pointer"
                     >
                       View Active Orders
                     </Link>

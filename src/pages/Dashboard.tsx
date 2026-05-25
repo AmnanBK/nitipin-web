@@ -168,7 +168,7 @@ export default function Dashboard() {
       {/* ==========================================
          A. SIDEBAR NAVIGASI (ROYAL BLUE PANEL)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo & Subtitle */}
           <div className="px-2 py-4">
@@ -182,7 +182,7 @@ export default function Dashboard() {
           
           {/* Menu Links (6 Clean Navigation links) */}
           <nav className="space-y-1 mt-4">
-            <Link to="/dashboard" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
+            <Link to="/dashboard" className="bg-white text-[#0c457d] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
               <Icons.Dashboard />
               <span>Dashboard</span>
             </Link>
@@ -213,7 +213,7 @@ export default function Dashboard() {
         <div className="space-y-2">
           {/* Interactive User profile widget */}
           <Link to="/profile" className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 hover:bg-white/20 transition-all shrink-0 cursor-pointer block">
-            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-blue-600/30">
+            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-[#0c457d]/30">
               {profile?.profile_photo ? (
                 <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -242,7 +242,7 @@ export default function Dashboard() {
           
           {/* HEADER MAIN */}
           <div className="mb-6">
-            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Dashboard</h2>
+            <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">Dashboard</h2>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               Welcome back, {profile?.name || user?.name || 'Sarah'}!
             </p>
@@ -285,9 +285,9 @@ export default function Dashboard() {
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
                     <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Total Product</p>
-                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">{products.length}</h3>
+                    <h3 className="text-2xl font-semibold text-gray-900 mt-1.5 leading-tight truncate">{products.length}</h3>
                   </div>
-                  <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600">
+                  <div className="bg-[#0c457d]/10 p-2.5 rounded-xl text-[#0c457d]">
                     <Icons.Package />
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export default function Dashboard() {
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
                     <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Order Received</p>
-                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">{orders.length}</h3>
+                    <h3 className="text-2xl font-semibold text-gray-900 mt-1.5 leading-tight truncate">{orders.length}</h3>
                   </div>
                   <div className="bg-amber-50 p-2.5 rounded-xl text-amber-600">
                     <Icons.ShoppingCart />
@@ -308,7 +308,7 @@ export default function Dashboard() {
                   <div className="flex justify-between items-start w-full">
                     <div>
                       <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Balance</p>
-                      <h3 className="text-3xl font-semibold text-gray-900 mt-1.5">
+                      <h3 className="text-2xl font-semibold text-gray-900 mt-1.5 leading-tight truncate">
                         {formatMockupIDR(profile?.balance || 0)}
                       </h3>
                     </div>
@@ -319,7 +319,7 @@ export default function Dashboard() {
                   <button 
                     onClick={handleOpenWithdrawModal}
                     disabled={!profile?.balance || Number(profile.balance) <= 0}
-                    className="mt-3 pt-2.5 border-t border-gray-50 text-xs font-bold flex items-center gap-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 text-[#1e53e6] hover:text-blue-700 cursor-pointer"
+                    className="mt-3 pt-2.5 border-t border-gray-50 text-xs font-bold flex items-center gap-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 text-[#0c457d] hover:text-[#0a3a69] cursor-pointer"
                   >
                     <span>Withdraw Funds</span>
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -332,7 +332,7 @@ export default function Dashboard() {
                 <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50 flex justify-between items-start border border-gray-100 hover:scale-[1.01] transition-all">
                   <div>
                     <p className="text-gray-600 text-sm font-normal uppercase tracking-wider">Account Status</p>
-                    <h3 className="text-3xl font-semibold text-gray-900 mt-1.5 capitalize">
+                    <h3 className="text-2xl font-semibold text-gray-900 mt-1.5 capitalize leading-tight truncate">
                       {profile?.account_status || 'Active'}
                     </h3>
                   </div>
@@ -346,7 +346,7 @@ export default function Dashboard() {
               {/* 2. ORDER LIST TABLE (PIXEL-PERFECT MOCKUP THEME) */}
               <div className="bg-white rounded-2xl shadow-md shadow-gray-200/50 overflow-hidden border border-gray-100">
                 {/* Header Row (Solid Royal Blue banner) */}
-                <div className="bg-[#1e53e6] text-white py-4 px-6 font-semibold text-sm">
+                <div className="bg-[#0c457d] text-white py-4 px-6 font-semibold text-sm">
                   <div className="grid grid-cols-5 w-full tracking-wide">
                     <span>ID</span>
                     <span>Buyer</span>
@@ -381,7 +381,7 @@ export default function Dashboard() {
                               ? 'bg-green-50 text-green-600 border-green-200'
                               : order.status === 'pending_review'
                               ? 'bg-amber-50 text-amber-600 border-amber-200'
-                              : 'bg-blue-50 text-blue-600 border-blue-200'
+                              : 'bg-[#0c457d]/10 text-[#0c457d] border-[#0c457d]/20'
                           }`}>
                             {order.status.replace('_', ' ')}
                           </span>
@@ -489,7 +489,7 @@ export default function Dashboard() {
                 <button
                   type="submit"
                   disabled={withdrawing}
-                  className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
                 >
                   {withdrawing ? 'Processing...' : 'Confirm Withdraw'}
                 </button>

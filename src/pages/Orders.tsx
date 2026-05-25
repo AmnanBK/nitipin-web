@@ -495,7 +495,7 @@ export default function Orders() {
       case 'pending_review':
         return 'bg-amber-50 text-amber-700 border-amber-100 border';
       case 'approved':
-        return 'bg-blue-50 text-[#1e53e6] border-blue-100 border';
+        return 'bg-[#0c457d]/10 text-[#0c457d] border-blue-100 border';
       case 'purchased':
         return 'bg-purple-50 text-purple-700 border-purple-100 border';
       case 'shipped':
@@ -537,7 +537,7 @@ export default function Orders() {
       {/* ==========================================
          A. SIDEBAR NAVIGASI (ROYAL BLUE PANEL)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo & Subtitle */}
           <div className="px-2 py-4">
@@ -559,7 +559,7 @@ export default function Orders() {
               <Icons.Package />
               <span>My Catalogue</span>
             </Link>
-            <Link to="/orders" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
+            <Link to="/orders" className="bg-white text-[#0c457d] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
               <Icons.ShoppingCart />
               <span>Orders</span>
             </Link>
@@ -582,7 +582,7 @@ export default function Orders() {
         <div className="space-y-2">
           {/* Interactive User profile widget */}
           <Link to="/profile" className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 hover:bg-white/20 transition-all shrink-0 cursor-pointer block">
-            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-blue-600/30">
+            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-[#0c457d]/30">
               {profile?.profile_photo ? (
                 <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -612,7 +612,7 @@ export default function Orders() {
           {/* HEADER MAIN */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Orders</h2>
+              <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">Orders</h2>
               <p className="text-sm text-gray-400 mt-1 font-medium">Manage and process traveler orders</p>
             </div>
           </div>
@@ -659,7 +659,7 @@ export default function Orders() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`pb-3 text-sm font-semibold transition-all relative flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
                   activeTab === tab.id
-                    ? 'text-[#1e53e6]'
+                    ? 'text-[#0c457d]'
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
@@ -667,7 +667,7 @@ export default function Orders() {
                 {tab.count > 0 && (
                   <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-[#1e53e6] text-white'
+                      ? 'bg-[#0c457d] text-white'
                       : tab.id === 'pending_review'
                       ? 'bg-amber-500 text-white'
                       : 'bg-gray-100 text-gray-500'
@@ -676,7 +676,7 @@ export default function Orders() {
                   </span>
                 )}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1e53e6] rounded-full" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0c457d] rounded-full" />
                 )}
               </button>
             ))}
@@ -705,7 +705,7 @@ export default function Orders() {
           ) : filteredOrders.length === 0 ? (
             /* EMPTY STATE */
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center max-w-md mx-auto mt-12 flex flex-col items-center">
-              <div className="bg-blue-50 p-4 rounded-full text-blue-500 mb-4 shrink-0">
+              <div className="bg-[#0c457d]/10 p-4 rounded-full text-blue-500 mb-4 shrink-0">
                 <Icons.ShoppingCart />
               </div>
               <h4 className="text-lg font-semibold text-gray-900">No Orders Found</h4>
@@ -775,7 +775,7 @@ export default function Orders() {
                             </button>
                             <button
                               onClick={(e) => handleApproveOrder(order.id, e)}
-                              className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm shadow-blue-100 cursor-pointer"
+                              className="px-4 py-2 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm shadow-blue-100 cursor-pointer"
                             >
                               Approve
                             </button>
@@ -784,7 +784,7 @@ export default function Orders() {
                         {order.status === 'approved' && (
                           <button
                             onClick={(e) => handleOpenProofModal(order.id, e)}
-                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
+                            className="px-4 py-2 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
                           >
                             Mark as Purchased
                           </button>
@@ -792,7 +792,7 @@ export default function Orders() {
                         {order.status === 'purchased' && (
                           <button
                             onClick={(e) => handleShipOrder(order.id, e)}
-                            className="px-4 py-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
+                            className="px-4 py-2 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-xs font-semibold rounded-xl transition duration-150 shadow-sm cursor-pointer"
                           >
                             Ship Product
                           </button>
@@ -882,14 +882,14 @@ export default function Orders() {
                             : isCompleted
                             ? 'bg-emerald-500 text-white'
                             : isActive
-                            ? 'bg-[#1e53e6] text-white shadow-blue-100 shadow-md scale-105'
+                            ? 'bg-[#0c457d] text-white shadow-blue-100 shadow-md scale-105'
                             : 'bg-slate-50 text-gray-400'
                         }`}>
                           {isCompleted ? '✓' : step.num}
                         </div>
                         {/* Label text */}
                         <span className={`text-[11px] font-semibold mt-2 ${
-                          isCanceled ? 'text-rose-500' : isActive ? 'text-[#1e53e6]' : isCompleted ? 'text-gray-900' : 'text-gray-400'
+                          isCanceled ? 'text-rose-500' : isActive ? 'text-[#0c457d]' : isCompleted ? 'text-gray-900' : 'text-gray-400'
                         }`}>
                           {step.label}
                         </span>
@@ -923,7 +923,7 @@ export default function Orders() {
                         <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2 font-normal">{getProductDetails(selectedOrder.product_id).description}</p>
                         <div className="bg-slate-50 rounded-xl p-2.5 mt-3 flex justify-between items-center border border-slate-100">
                           <span className="text-xs text-gray-500 font-semibold">Product Price:</span>
-                          <span className="text-sm font-semibold text-[#1e53e6]">
+                          <span className="text-sm font-semibold text-[#0c457d]">
                             {formatMockupIDR(Number(selectedOrder.total_price) / selectedOrder.quantity || getProductDetails(selectedOrder.product_id).price)} × {selectedOrder.quantity} pcs
                           </span>
                         </div>
@@ -983,7 +983,7 @@ export default function Orders() {
                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer" onClick={() => window.open(proof.photo_url, '_blank')}>
                                 <span className="bg-white/90 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-gray-800 shadow">Zoom Receipt</span>
                               </div>
-                              <span className="absolute top-2 left-2 text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase border tracking-wider bg-white text-blue-600 border-blue-100 shadow-sm">
+                              <span className="absolute top-2 left-2 text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase border tracking-wider bg-white text-[#0c457d] border-blue-100 shadow-sm">
                                 {proof.proof_type}
                               </span>
                             </div>
@@ -1008,7 +1008,7 @@ export default function Orders() {
                   <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Buyer Identity & Shipping Info</h4>
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
+                      <div className="w-12 h-12 bg-[#0c457d]/10 text-[#0c457d] rounded-full flex items-center justify-center font-semibold text-lg shrink-0">
                         {(selectedOrder.buyer_name || getBuyerName(selectedOrder.buyer_id)).charAt(0)}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -1061,7 +1061,7 @@ export default function Orders() {
                   </div>
 
                   {/* Pro-Tip Box */}
-                  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex gap-3">
+                  <div className="bg-[#0c457d]/10 border border-blue-100 rounded-2xl p-5 flex gap-3">
                     <span className="text-blue-500 text-xl font-semibold shrink-0">💡</span>
                     <div>
                       <h5 className="text-xs font-semibold text-blue-900">Tips for Travelers</h5>
@@ -1094,7 +1094,7 @@ export default function Orders() {
                   </button>
                   <button
                     onClick={(e) => { handleApproveOrder(selectedOrder.id, e); }}
-                    className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                    className="px-6 py-3 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                   >
                     Approve Order
                   </button>
@@ -1103,7 +1103,7 @@ export default function Orders() {
               {selectedOrder.status === 'approved' && (
                 <button
                   onClick={(e) => { handleOpenProofModal(selectedOrder.id, e); }}
-                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                  className="px-6 py-3 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                 >
                   Mark as Purchased & Upload Receipt
                 </button>
@@ -1111,7 +1111,7 @@ export default function Orders() {
               {selectedOrder.status === 'purchased' && (
                 <button
                   onClick={(e) => { handleShipOrder(selectedOrder.id, e); }}
-                  className="px-6 py-3 bg-[#1e53e6] hover:bg-[#1541b8] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                  className="px-6 py-3 bg-[#0c457d] hover:bg-[#0a3a69] text-white text-sm font-semibold rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
                 >
                   Ship Product
                 </button>
@@ -1148,7 +1148,7 @@ export default function Orders() {
                   {!previewUrl ? (
                     <label
                       htmlFor="proof-file"
-                      className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:border-blue-500 rounded-2xl p-6 cursor-pointer bg-white transition-all hover:bg-blue-50/20 group"
+                      className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:border-blue-500 rounded-2xl p-6 cursor-pointer bg-white transition-all hover:bg-[#0c457d]/10/20 group"
                     >
                       <div className="flex flex-col items-center justify-center text-center">
                         <svg
@@ -1164,7 +1164,7 @@ export default function Orders() {
                             d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
                           />
                         </svg>
-                        <span className="text-xs font-bold text-gray-700 group-hover:text-blue-600 transition-colors duration-150">
+                        <span className="text-xs font-bold text-gray-700 group-hover:text-[#0c457d] transition-colors duration-150">
                           Upload receipt image
                         </span>
                         <span className="text-[10px] text-gray-400 mt-1">
@@ -1236,7 +1236,7 @@ export default function Orders() {
                 <button
                   type="submit"
                   disabled={uploadingProof}
-                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-xs rounded-xl py-2 px-5 transition duration-150 shadow-sm disabled:opacity-75 flex items-center justify-center gap-2 cursor-pointer"
+                  className="bg-[#0c457d] hover:bg-[#0a3a69] text-white font-semibold text-xs rounded-xl py-2 px-5 transition duration-150 shadow-sm disabled:opacity-75 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {uploadingProof ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -1258,7 +1258,7 @@ export default function Orders() {
       {confirmApproveId !== null && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 flex flex-col items-center text-center animate-zoom-in">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-sm shadow-blue-50">
+            <div className="w-12 h-12 bg-[#0c457d]/10 text-[#0c457d] rounded-full flex items-center justify-center mb-4 shrink-0 shadow-sm shadow-blue-50">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -1279,7 +1279,7 @@ export default function Orders() {
                   executeApproveOrder(confirmApproveId);
                   setConfirmApproveId(null);
                 }}
-                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                className="flex-1 bg-[#0c457d] hover:bg-[#0a3a69] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
               >
                 Approve
               </button>
@@ -1327,8 +1327,11 @@ export default function Orders() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 flex flex-col items-center text-center animate-zoom-in">
             <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-sm shadow-amber-50">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177V3.75A1.5 1.5 0 0012.75 2.25h-1.5a1.5 1.5 0 00-1.5 1.5v4.877m4.5 0A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25m7.5 0h-7.5" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <rect x="1" y="3" width="15" height="13" rx="2" ry="2" />
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                <circle cx="5.5" cy="18.5" r="2.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Mark as Shipped</h3>
@@ -1347,7 +1350,7 @@ export default function Orders() {
                   executeShipOrder(confirmShipId);
                   setConfirmShipId(null);
                 }}
-                className="flex-1 bg-[#1e53e6] hover:bg-[#1541b8] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
+                className="flex-1 bg-[#0c457d] hover:bg-[#0a3a69] text-white font-semibold text-xs py-3 rounded-xl transition duration-150 shadow-md shadow-blue-100 cursor-pointer"
               >
                 Ship
               </button>
