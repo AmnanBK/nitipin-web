@@ -1,0 +1,11 @@
+runtime: nodejs22
+service: nitipin-web
+
+handlers:
+  - url: /(.*\..+)$
+    static_files: dist/\1
+    upload: dist/(.*\..+)$
+
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
