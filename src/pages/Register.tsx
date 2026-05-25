@@ -63,7 +63,7 @@ export default function Register() {
             <p className="text-xs text-gray-500 mb-3 leading-normal">
               If you already have an account register <br />
               You can{' '}
-              <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+              <Link to="/login" className="text-[#0c457d] font-semibold hover:underline">
                 Login here !
               </Link>
             </p>
@@ -250,7 +250,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isSubmitting || !!success}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed mt-4 text-center flex items-center justify-center text-sm"
+                className="w-full bg-[#0c457d] hover:bg-[#0a3a69] text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed mt-4 text-center flex items-center justify-center text-sm"
               >
                 {isSubmitting ? (
                   <svg
@@ -275,7 +275,7 @@ export default function Register() {
         </div>
 
         {/* Sisi Kanan: Visual Card */}
-        <div className="hidden lg:flex bg-blue-600 rounded-3xl p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex bg-[#0c457d] rounded-3xl p-12 flex-col justify-between relative overflow-hidden">
           {/* Header kanan */}
           <div className="text-right">
             <span className="text-blue-100 text-sm font-medium tracking-wide">
@@ -302,7 +302,7 @@ export default function Register() {
           </div>
           
           {/* Efek Gradasi / Latar Belakang */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500 rounded-full filter blur-3xl opacity-30 -mr-20 -mt-20"></div>
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#0c457d]/100 rounded-full filter blur-3xl opacity-30 -mr-20 -mt-20"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-700 rounded-full filter blur-3xl opacity-50 -ml-32 -mb-32"></div>
         </div>
 

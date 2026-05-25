@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   GLOBAL PREMIUM MINIMALIST SCROLLBARS
+   ========================================================================== */
+
+/* Webkit Browsers (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Makes track fully invisible for a clean layout */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.25); /* Elegant light-gray with low opacity */
+  border-radius: 9999px;
+  border: 1px solid transparent; /* Gives micro spacing cushion */
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5); /* Smoothly darkens on cursor hover */
+}
+
+/* Firefox standard custom scrollbar properties */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.25) transparent;
+}

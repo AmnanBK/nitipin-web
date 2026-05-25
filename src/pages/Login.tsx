@@ -61,7 +61,7 @@ export default function Login() {
             <p className="text-gray-500 mb-8">
               If you don't have an account register <br />
               You can{' '}
-              <Link to="/register" className="text-blue-600 font-semibold hover:underline">
+              <Link to="/register" className="text-[#0c457d] font-semibold hover:underline">
                 Register here !
               </Link>
             </p>
@@ -181,7 +181,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed mt-8 text-center flex items-center justify-center"
+                className="w-full bg-[#0c457d] hover:bg-[#0a3a69] text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed mt-8 text-center flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <svg
@@ -206,7 +206,7 @@ export default function Login() {
         </div>
 
         {/* Sisi Kanan: Visual Card */}
-        <div className="hidden lg:flex bg-blue-600 rounded-3xl p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex bg-[#0c457d] rounded-3xl p-12 flex-col justify-between relative overflow-hidden">
           {/* Header kanan */}
           <div className="text-right">
             <span className="text-blue-100 text-sm font-medium tracking-wide">
@@ -234,7 +234,7 @@ export default function Login() {
           </div>
           
           {/* Efek Gradasi / Latar Belakang Lingkaran Modern */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500 rounded-full filter blur-3xl opacity-30 -mr-20 -mt-20"></div>
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#0c457d]/100 rounded-full filter blur-3xl opacity-30 -mr-20 -mt-20"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-700 rounded-full filter blur-3xl opacity-50 -ml-32 -mb-32"></div>
         </div>
 

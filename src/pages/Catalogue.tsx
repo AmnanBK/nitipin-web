@@ -45,7 +45,7 @@ const Icons = {
     </svg>
   ),
   Tag: () => (
-    <svg className="w-4 h-4 mr-1 text-[#1e53e6] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <svg className="w-4 h-4 mr-1 text-[#0c457d] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
     </svg>
   ),
@@ -257,7 +257,7 @@ export default function Catalogue() {
       {/* ==========================================
          A. SIDEBAR NAVIGASI (ROYAL BLUE PANEL)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo & Subtitle */}
           <div className="px-2 py-4">
@@ -275,7 +275,7 @@ export default function Catalogue() {
               <Icons.Dashboard />
               <span>Dashboard</span>
             </Link>
-            <Link to="/catalogue" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
+            <Link to="/catalogue" className="bg-white text-[#0c457d] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
               <Icons.Package />
               <span>My Catalogue</span>
             </Link>
@@ -302,7 +302,7 @@ export default function Catalogue() {
         <div className="space-y-2">
           {/* Interactive User profile widget */}
           <Link to="/profile" className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 hover:bg-white/20 transition-all shrink-0 cursor-pointer block">
-            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-blue-600/30">
+            <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-[#0c457d]/30">
               {profile?.profile_photo ? (
                 <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -332,13 +332,13 @@ export default function Catalogue() {
           {/* HEADER MAIN WITH ADD PRODUCT BUTTON */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">My Catalogue</h2>
+              <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">My Catalogue</h2>
               <p className="text-sm text-gray-400 mt-1 font-medium">Manage your product</p>
             </div>
             
             <button
               onClick={handleOpenCreate}
-              className="bg-[#1e53e6] hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="bg-[#0c457d] hover:bg-[#0a3a69] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Icons.Plus />
               <span>New Product</span>
@@ -382,7 +382,7 @@ export default function Catalogue() {
                EMPTY STATE
                ========================================== */
             <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm max-w-xl mx-auto mt-12">
-              <div className="w-20 h-20 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center mx-auto mb-6">
                 <Icons.Package />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Your Catalogue is Empty</h3>
@@ -391,7 +391,7 @@ export default function Catalogue() {
               </p>
               <button
                 onClick={handleOpenCreate}
-                className="bg-[#1e53e6] hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all"
+                className="bg-[#0c457d] hover:bg-[#0a3a69] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all"
               >
                 Add First Product
               </button>
@@ -422,7 +422,7 @@ export default function Catalogue() {
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-300">
+                        <div className="w-full h-full flex items-center justify-center bg-[#0c457d]/10 text-blue-300">
                           <Icons.Package />
                         </div>
                       )}
@@ -444,7 +444,7 @@ export default function Catalogue() {
 
                       <div>
                         {/* Price wrapper with Tag Icon */}
-                        <div className="flex items-center text-sm font-semibold text-[#1e53e6] mb-4 bg-blue-50/50 p-2 rounded-lg inline-flex w-full">
+                        <div className="flex items-center text-sm font-semibold text-[#0c457d] mb-4 bg-[#0c457d]/10/50 p-2 rounded-lg inline-flex w-full">
                           <Icons.Tag />
                           <span>{formatMockupIDR(displayPrice)}</span>
                         </div>
@@ -453,7 +453,7 @@ export default function Catalogue() {
                         <div className="flex items-center gap-2 w-full">
                           <button
                             onClick={() => handleOpenEdit(product)}
-                            className="bg-blue-50 hover:bg-blue-100 text-[#1e53e6] py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all flex-1 cursor-pointer"
+                            className="bg-[#0c457d]/10 hover:bg-blue-100 text-[#0c457d] py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all flex-1 cursor-pointer"
                           >
                             <Icons.Edit />
                             <span>Edit</span>
@@ -495,7 +495,7 @@ export default function Catalogue() {
             <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 overflow-hidden">
               
               {/* Scrollable Form Content */}
-              <div className="space-y-4 overflow-y-auto flex-1 pr-2">
+              <div className="space-y-4 overflow-y-auto flex-1 pl-1.5 pr-2">
                 {modalError && (
                   <div className="p-3 bg-rose-50 border border-rose-100 text-rose-800 rounded-xl text-xs font-bold flex items-center gap-2">
                     <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -547,7 +547,7 @@ export default function Catalogue() {
                 {/* Input: Attach Picture File */}
                 <div className="space-y-1.5">
                   <label className="block text-sm font-normal text-gray-600 mb-1">Product Image</label>
-                  <div className="border-2 border-dashed border-gray-200 rounded-2xl p-5 text-center hover:border-blue-500 hover:bg-blue-50/20 transition-all relative cursor-pointer">
+                  <div className="border-2 border-dashed border-gray-200 rounded-2xl p-5 text-center hover:border-blue-500 hover:bg-[#0c457d]/10/20 transition-all relative cursor-pointer">
                     <input 
                       type="file"
                       accept="image/*"
@@ -565,7 +565,7 @@ export default function Catalogue() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-[#1e53e6]">
+                      <div className="w-9 h-9 rounded-full bg-[#0c457d]/10 flex items-center justify-center text-[#0c457d]">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 3.75 0 11-.75 0 .375 3.75 0 01.75 0z" />
                         </svg>
@@ -599,14 +599,14 @@ export default function Catalogue() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="bg-white hover:bg-gray-50 border border-gray-200 text-blue-600 hover:text-blue-700 font-bold text-sm rounded-xl py-2.5 px-8 transition duration-150 cursor-pointer"
+                  className="bg-white hover:bg-gray-50 border border-gray-200 text-[#0c457d] hover:text-[#0a3a69] font-bold text-sm rounded-xl py-2.5 px-8 transition duration-150 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={modalLoading}
-                  className="bg-[#2563eb] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white font-bold text-sm rounded-xl py-2.5 px-8 transition duration-150 shadow-sm disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer"
+                  className="bg-[#0c457d] hover:bg-[#0a3a69] active:bg-[#082d54] text-white font-bold text-sm rounded-xl py-2.5 px-8 transition duration-150 shadow-sm disabled:opacity-70 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {modalLoading ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

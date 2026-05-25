@@ -286,7 +286,7 @@ export default function SalesHistory() {
         <Icons.ShoppingCart />
         <span>Orders</span>
       </Link>
-      <Link to="/sales-history" className="bg-white text-[#1e53e6] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
+      <Link to="/sales-history" className="bg-white text-[#0c457d] font-semibold px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-sm text-sm">
         <Icons.History />
         <span>Sales History</span>
       </Link>
@@ -307,7 +307,7 @@ export default function SalesHistory() {
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo */}
           <div className="px-2 py-4">
@@ -325,7 +325,7 @@ export default function SalesHistory() {
 
         {/* User Card */}
         <Link to="/profile" className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 mx-1 flex items-center gap-3 border border-white/10 hover:bg-white/20 transition-all shrink-0 cursor-pointer block">
-          <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-blue-600/30">
+          <div className="w-9 h-9 rounded-full border border-white/40 overflow-hidden flex items-center justify-center text-white shrink-0 bg-[#0c457d]/30">
             {profile?.profile_photo ? (
               <img src={profile.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
@@ -350,7 +350,7 @@ export default function SalesHistory() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowMobileSidebar(false)} />
           
-          <aside className="relative flex flex-col w-64 bg-[#1e53e6] text-white p-4 shadow-2xl animate-slide-right h-full justify-between">
+          <aside className="relative flex flex-col w-64 bg-[#0c457d] text-white p-4 shadow-2xl animate-slide-right h-full justify-between">
             <button
               onClick={() => setShowMobileSidebar(false)}
               className="absolute top-4 right-4 p-1 rounded-lg text-white/80 hover:text-white"
@@ -402,9 +402,9 @@ export default function SalesHistory() {
           </button>
           <div className="flex items-center gap-2">
             <img src={logoImg} alt="Nitipin Logo" className="h-6 w-auto object-contain" />
-            <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+            <span className="font-semibold text-[#0c457d] text-lg tracking-tight">Nitipin</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs animate-fade-in">
+          <div className="w-8 h-8 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center font-semibold text-xs animate-fade-in">
             {profile?.name?.[0].toUpperCase() || user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -414,7 +414,7 @@ export default function SalesHistory() {
           
           {/* Header Title section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-semibold text-[#1e53e6] tracking-tight">Sale History</h2>
+            <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">Sale History</h2>
             <p className="text-sm text-gray-600 mt-1 font-normal animate-fade-in">
               Welcome back, {profile?.name || user?.name || 'Sarah'}!
             </p>
@@ -449,7 +449,7 @@ export default function SalesHistory() {
               <div className="flex items-center justify-between w-full">
                 <div className="space-y-1">
                   <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Order Completed</span>
-                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                  <span className="text-2xl lg:text-3xl font-semibold text-gray-900 block leading-tight">
                     {completedCount}
                   </span>
                 </div>
@@ -458,13 +458,13 @@ export default function SalesHistory() {
                 </div>
               </div>
             </div>
-
+ 
             {/* CARD 2: Total Revenue */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[135px]">
               <div className="flex items-center justify-between w-full">
                 <div className="space-y-1">
                   <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Total Revenue</span>
-                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                  <span className="text-2xl lg:text-3xl font-semibold text-gray-900 block leading-tight">
                     {formatMockupIDR(totalRevenue)}
                   </span>
                 </div>
@@ -473,13 +473,13 @@ export default function SalesHistory() {
                 </div>
               </div>
             </div>
-
+ 
             {/* CARD 3: Wallet Balance */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[135px]">
               <div className="flex items-center justify-between w-full">
                 <div className="space-y-1">
                   <span className="text-xs font-normal text-gray-500 uppercase tracking-wider block">Balance</span>
-                  <span className="text-3xl lg:text-4xl font-semibold text-gray-900 block leading-tight">
+                  <span className="text-2xl lg:text-3xl font-semibold text-gray-900 block leading-tight">
                     {formatMockupIDR(walletBalance)}
                   </span>
                 </div>
@@ -491,7 +491,7 @@ export default function SalesHistory() {
               <button 
                 onClick={handleOpenWithdrawModal}
                 disabled={!profile?.balance || Number(profile.balance) <= 0}
-                className="mt-3 pt-2 text-xs font-bold flex items-center gap-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 text-[#1e53e6] hover:text-blue-700 cursor-pointer"
+                className="mt-3 pt-2 text-xs font-bold flex items-center gap-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 text-[#0c457d] hover:text-[#0a3a69] cursor-pointer"
               >
                 <span>Withdraw Funds</span>
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -499,9 +499,9 @@ export default function SalesHistory() {
                 </svg>
               </button>
             </div>
-
+ 
           </div>
-
+ 
           {/* SEARCH BAR (Accented - Positioned directly above table) */}
           <div className="mb-6 relative w-full shrink-0">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
@@ -527,7 +527,7 @@ export default function SalesHistory() {
               </button>
             )}
           </div>
-
+ 
           {/* TABLE CONTAINER BLOCK */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
             
@@ -536,7 +536,7 @@ export default function SalesHistory() {
                 
                 {/* Table Header with premium blue background */}
                 <thead>
-                  <tr className="bg-[#5b87f9] text-white">
+                  <tr className="bg-[#0c457d] text-white">
                     <th className="py-4 px-6 font-semibold text-sm tracking-wide">ID</th>
                     <th className="py-4 px-6 font-semibold text-sm tracking-wide">Transaction Date</th>
                     <th className="py-4 px-6 font-semibold text-sm tracking-wide">Buyer</th>
@@ -577,7 +577,7 @@ export default function SalesHistory() {
                         <td className="py-4.5 px-6 text-sm font-normal text-gray-600">
                           <div className="flex items-center gap-2">
                             <span>{row.product}</span>
-                            <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50/70 border border-blue-100 rounded">
+                            <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-[#0c457d] bg-[#0c457d]/10/70 border border-blue-100 rounded">
                               x{row.quantity}
                             </span>
                           </div>
@@ -697,7 +697,7 @@ export default function SalesHistory() {
                 <button
                   type="submit"
                   disabled={withdrawing}
-                  className="px-6 py-2.5 bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-md transition duration-150 disabled:bg-blue-300 disabled:scale-100 cursor-pointer"
                 >
                   {withdrawing ? 'Processing...' : 'Confirm Withdraw'}
                 </button>

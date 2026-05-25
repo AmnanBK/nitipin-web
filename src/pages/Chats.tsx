@@ -616,7 +616,7 @@ export default function Chats() {
         <Icons.Star />
         <span>My Reviews</span>
       </Link>
-      <Link to="/chats" className="bg-white text-[#1e53e6] px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-semibold shadow-sm">
+      <Link to="/chats" className="bg-white text-[#0c457d] px-4 py-2.5 rounded-lg flex items-center gap-3 transition-all text-sm font-semibold shadow-sm">
         <Icons.Chat />
         <span>Chats</span>
       </Link>
@@ -629,7 +629,7 @@ export default function Chats() {
       {/* ==========================================
          A. SIDEBAR NAVIGATION (ROYAL BLUE)
          ========================================== */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#1e53e6] text-white shrink-0 justify-between p-4 shadow-xl">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#0c457d] text-white shrink-0 justify-between p-4 shadow-xl">
         <div>
           {/* Logo */}
           <div className="px-2 py-4">
@@ -675,7 +675,7 @@ export default function Chats() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowMobileSidebar(false)} />
           
-          <aside className="relative flex flex-col w-64 bg-[#1e53e6] text-white p-4 shadow-2xl animate-slide-right h-full justify-between shrink-0">
+          <aside className="relative flex flex-col w-64 bg-[#0c457d] text-white p-4 shadow-2xl animate-slide-right h-full justify-between shrink-0">
             <button
               onClick={() => setShowMobileSidebar(false)}
               className="absolute top-4 right-4 p-1 rounded-lg text-white/80 hover:text-white"
@@ -739,9 +739,9 @@ export default function Chats() {
           </button>
           <div className="flex items-center gap-2">
             <img src={logoImg} alt="Nitipin Logo" className="h-6 w-auto object-contain" />
-            <span className="font-semibold text-[#1e53e6] text-lg tracking-tight">Nitipin</span>
+            <span className="font-semibold text-[#0c457d] text-lg tracking-tight">Nitipin</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#1e53e6]/10 text-[#1e53e6] flex items-center justify-center font-semibold text-xs">
+          <div className="w-8 h-8 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center font-semibold text-xs">
             {user?.name?.[0].toUpperCase() || 'S'}
           </div>
         </header>
@@ -752,9 +752,9 @@ export default function Chats() {
           {/* 1. Chats Contacts Column (Left Pane) */}
           <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col shrink-0">
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 shrink-0">
-              <h2 className="text-lg font-semibold text-[#1e53e6]">Chats</h2>
-              <p className="text-xs text-gray-400 mt-1">Talk with your buyers</p>
+            <div className="p-6 border-b border-gray-100 shrink-0">
+              <h2 className="text-3xl font-semibold text-[#0c457d] tracking-tight">Chats</h2>
+              <p className="text-sm text-gray-500 mt-1">Talk with your buyers</p>
             </div>
 
             {/* Contacts list container */}
@@ -815,13 +815,13 @@ export default function Chats() {
                       onClick={() => setSelectedBuyerId(Number(id))}
                       className={`w-full p-4 flex items-center gap-3 transition-all text-left border-l-[5px] cursor-pointer ${
                         isActive 
-                          ? 'bg-blue-50/90 border-[#1e53e6] shadow-sm shadow-[#1e53e6]/5' 
+                          ? 'bg-[#0c457d]/10/90 border-[#0c457d] shadow-sm shadow-[#0c457d]/5' 
                           : 'bg-white border-transparent hover:bg-slate-50/70 hover:border-gray-200'
                       }`}
                     >
                       <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border flex items-center justify-center font-semibold transition-all ${
                         isActive 
-                          ? 'border-[#1e53e6]/30 bg-blue-100 text-[#1e53e6] scale-105 shadow-sm' 
+                          ? 'border-[#0c457d]/30 bg-blue-100 text-[#0c457d] scale-105 shadow-sm' 
                           : 'border-slate-100 bg-slate-50 text-gray-600'
                       }`}>
                         {profile?.profile_photo ? (
@@ -834,7 +834,7 @@ export default function Chats() {
                         <div className="flex items-center justify-between gap-2">
                           <h4 className={`text-sm truncate transition-colors ${
                             unreadCount > 0 
-                              ? 'font-semibold text-[#1e53e6]' 
+                              ? 'font-semibold text-[#0c457d]' 
                               : isActive 
                                 ? 'font-semibold text-gray-900' 
                                 : 'font-normal text-gray-700'
@@ -869,7 +869,7 @@ export default function Chats() {
             {selectedBuyerId === null ? (
               // Empty Slate
               <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-                <div className="w-16 h-16 rounded-full bg-blue-50 border border-blue-150 flex items-center justify-center text-[#1e53e6] shadow-sm mb-4">
+                <div className="w-16 h-16 rounded-full bg-[#0c457d]/10 border border-blue-150 flex items-center justify-center text-[#0c457d] shadow-sm mb-4">
                   <Icons.Chat />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-800">No Chat Selected</h3>
@@ -883,7 +883,7 @@ export default function Chats() {
                 {/* Active contact bar */}
                 <div className="h-16 bg-white border-b border-gray-150 flex items-center px-6 justify-between shrink-0 shadow-sm">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center bg-blue-50 text-[#1e53e6] font-semibold text-sm">
+                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center bg-[#0c457d]/10 text-[#0c457d] font-semibold text-sm">
                       {activeBuyer?.profile_photo ? (
                         <img src={activeBuyer.profile_photo} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
@@ -942,7 +942,7 @@ export default function Chats() {
                             <div
                               className={`px-4 py-3 rounded-2xl text-sm font-normal shadow-sm leading-relaxed transition-all duration-200 ${
                                 isOutgoing
-                                  ? 'bg-[#1e53e6] text-white rounded-tr-none shadow-blue-600/10'
+                                  ? 'bg-[#0c457d] text-white rounded-tr-none shadow-blue-600/10'
                                   : 'bg-white text-gray-800 border border-slate-150 rounded-tl-none'
                               }`}
                             >
@@ -978,7 +978,7 @@ export default function Chats() {
                   <button
                     type="submit"
                     disabled={!inputText.trim()}
-                    className="w-10 h-10 rounded-xl bg-[#1e53e6] hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center shrink-0 transition disabled:opacity-50 disabled:scale-100 cursor-pointer"
+                    className="w-10 h-10 rounded-xl bg-[#0c457d] hover:bg-[#0a3a69] active:scale-95 text-white flex items-center justify-center shrink-0 transition disabled:opacity-50 disabled:scale-100 cursor-pointer"
                   >
                     <Icons.Send />
                   </button>
@@ -994,7 +994,7 @@ export default function Chats() {
       {/* Real-time Chime Notification Toast */}
       {activeToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-4 shadow-2xl shadow-blue-500/15 w-80 transition duration-300 animate-in fade-in slide-in-from-top-4">
-          <div className="w-10 h-10 rounded-full bg-blue-50 text-[#1e53e6] flex items-center justify-center font-bold text-sm shrink-0 border border-blue-100 shadow-inner">
+          <div className="w-10 h-10 rounded-full bg-[#0c457d]/10 text-[#0c457d] flex items-center justify-center font-bold text-sm shrink-0 border border-blue-100 shadow-inner">
             {activeToast.senderName[0].toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
